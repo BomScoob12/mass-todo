@@ -29,7 +29,7 @@ class TaskGroupSection extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.category_outlined, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  Icon(Icons.folder_open, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   const SizedBox(width: 8),
                   Text(
                     category.name,

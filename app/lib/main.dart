@@ -14,7 +14,7 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Offline First Todo',
+      title: 'Offline Todo',
       theme: AppTheme.lightTheme,
       home: const MainNavigation(),
       debugShowCheckedModeBanner: false,

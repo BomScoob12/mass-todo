@@ -6,7 +6,6 @@ import 'package:app/ui/app_theme.dart';
 import 'package:app/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:app/ui/new_task_screen.dart';
-import 'package:app/ui/task_details_screen.dart';
 import 'package:app/ui/widgets/tasks/task_group_section.dart';
 
 class MyTasksScreen extends ConsumerStatefulWidget {

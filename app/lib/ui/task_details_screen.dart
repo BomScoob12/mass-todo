@@ -41,7 +41,7 @@ class TaskDetailsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Task Details', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         actions: [
           IconButton(
@@ -78,35 +78,15 @@ class TaskDetailsScreen extends ConsumerWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                     ref.read(taskListProvider.notifier).toggleTaskCompletion(currentTask!.id);
-                  },
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    margin: const EdgeInsets.only(top: 4, right: 16),
-                    decoration: BoxDecoration(
-                      color: currentTask.isCompleted ? Theme.of(context).colorScheme.primary : Colors.transparent,
-                      border: Border.all(
-                        color: currentTask.isCompleted ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: currentTask.isCompleted ? const Icon(Icons.check, size: 20, color: Colors.white) : null,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     currentTask.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w900,
@@ -115,66 +95,90 @@ class TaskDetailsScreen extends ConsumerWidget {
                           color: currentTask.isCompleted ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(24.0),
-              ),
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                   _buildDetailRow(context, Icons.category_outlined, 'Category', categoryName),
-                   const Divider(height: 32),
-                   _buildDetailRow(
-                      context,
-                      Icons.schedule,
-                      'Deadline',
-                      currentTask.deadline != null ? DateFormat('MMMM d, yyyy - h:mm a').format(currentTask.deadline!) : 'Not set',
+                  const SizedBox(height: 32),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(24.0),
                     ),
-                   const Divider(height: 32),
-                   _buildDetailRow(context, Icons.flag_outlined, 'Priority', currentTask.priority),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        _buildDetailRow(context, Icons.category_outlined, 'Category', categoryName),
+                        const Divider(height: 32),
+                        _buildDetailRow(context, Icons.flag_outlined, 'Priority', currentTask.priority),
+                        const Divider(height: 32),
+                        _buildDetailRow(
+                          context,
+                          Icons.schedule,
+                          'Deadline',
+                          currentTask.deadline != null ? DateFormat('MMMM d, yyyy - h:mm a').format(currentTask.deadline!) : 'Not set',
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (currentTask.description != null && currentTask.description!.isNotEmpty) ...[
+                    const SizedBox(height: 32),
+                    Text(
+                      'Notes',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2)),
+                      ),
+                      child: Text(
+                        currentTask.description!,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              height: 1.6,
+                            ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 48),
+                  Center(
+                    child: Text(
+                      'Created on ${DateFormat('MMM d, yyyy').format(currentTask.createdAt)}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    ),
+                  ),
                 ],
               ),
             ),
-            if (currentTask.description != null && currentTask.description!.isNotEmpty) ...[
-              const SizedBox(height: 32),
-              Text(
-                'Notes',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2)),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  ref.read(taskListProvider.notifier).toggleTaskCompletion(currentTask!.id);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: currentTask.isCompleted 
+                      ? Theme.of(context).colorScheme.surfaceVariant
+                      : Theme.of(context).colorScheme.primary,
+                  foregroundColor: currentTask.isCompleted
+                      ? Theme.of(context).colorScheme.onSurfaceVariant
+                      : Colors.white,
                 ),
                 child: Text(
-                  currentTask.description!,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                     color: Theme.of(context).colorScheme.onSurfaceVariant,
-                     height: 1.6,
-                  ),
+                  currentTask.isCompleted ? 'Mark as Incomplete' : 'Complete Task',
                 ),
               ),
-            ],
-            const SizedBox(height: 48),
-            Center(
-               child: Text(
-                 'Created on ${DateFormat('MMM d, yyyy').format(currentTask.createdAt)}',
-                 style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
-               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+
   }
 
   Widget _buildDetailRow(BuildContext context, IconData icon, String label, String value) {

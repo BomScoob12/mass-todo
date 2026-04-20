@@ -23,10 +23,6 @@ class DashboardScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              const DashboardHeader(),
-              const SizedBox(height: 32),
-
               // Hero Greeting
               Text(
                 'Design your day',

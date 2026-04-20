@@ -7,6 +7,11 @@ import 'package:app/ui/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:app/ui/widgets/new_task/priority_selector.dart';
+import 'package:app/ui/widgets/new_task/gradient_save_button.dart';
+import 'package:app/ui/widgets/new_task/metadata_selector_card.dart';
+import 'package:app/ui/widgets/new_task/custom_text_field.dart';
+
 class NewTaskScreen extends ConsumerStatefulWidget {
   final TaskItem? taskToEdit;
   
@@ -101,6 +106,17 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoryProvider);
 
+    String categoryName = 'Select';
+    if (_isCreatingCategory) {
+      categoryName = 'New: ${_newCategoryController.text}';
+    } else if (_selectedCategory != null && categoriesAsync.hasValue) {
+      try {
+        categoryName = categoriesAsync.value!.firstWhere((c) => c.id == _selectedCategory).name;
+      } catch (e) {
+        categoryName = 'Unknown';
+      }
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
@@ -144,23 +160,10 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildLabel('Task Name'),
-                        TextFormField(
+                        CustomTextField(
                           controller: _nameController,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-                          decoration: InputDecoration(
-                            hintText: 'What needs your attention?',
-                            hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.outlineVariant,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                          ),
+                          hintText: 'What needs your attention?',
+                          isTitle: true,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter a task name';
@@ -170,35 +173,44 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                         ),
                         const SizedBox(height: 24),
                         _buildLabel('Description'),
-                        TextFormField(
+                        CustomTextField(
                           controller: _descriptionController,
+                          hintText: 'Add context, notes, or sub-items...',
                           maxLines: 3,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                          decoration: InputDecoration(
-                            hintText: 'Add context, notes, or sub-items...',
-                            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.outlineVariant,
-                                ),
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                          ),
                         ),
                         const SizedBox(height: 32),
                         Row(
                           children: [
-                            Expanded(child: _buildCategoryCard(categoriesAsync)),
+                            Expanded(
+                              child: MetadataSelectorCard(
+                                onTap: () => _showCategoryPicker(categoriesAsync),
+                                label: 'Category',
+                                valueText: categoryName,
+                                iconView: Icons.architecture,
+                                iconBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                iconColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                                hasTrailingIcon: true,
+                              ),
+                            ),
                             const SizedBox(width: 16),
-                            Expanded(child: _buildDeadlineCard()),
+                            Expanded(
+                              child: MetadataSelectorCard(
+                                onTap: _pickDeadline,
+                                label: 'Deadline',
+                                valueText: _selectedDate != null ? DateFormat('MMM d, h:mm a').format(_selectedDate!) : 'Not set',
+                                iconView: Icons.calendar_month,
+                                iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+                                iconColor: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 32),
                         _buildLabel('Priority Level'),
-                        _buildPrioritySelector(),
+                        PrioritySelector(
+                          currentPriority: _priority,
+                          onChanged: (val) => setState(() => _priority = val),
+                        ),
                         const SizedBox(height: 48), 
                       ],
                     ),
@@ -207,7 +219,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
               ),
               // Floating Save Button
               const SizedBox(height: 16),
-              _buildSaveButton(),
+              GradientSaveButton(onPressed: _saveTask),
             ],
           ),
         ),
@@ -229,248 +241,31 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     );
   }
 
-  Widget _buildCategoryCard(AsyncValue<List<TaskCategory>> categoriesAsync) {
-    String categoryName = 'Select';
-    if (_isCreatingCategory) {
-      categoryName = 'New: ${_newCategoryController.text}';
-    } else if (_selectedCategory != null && categoriesAsync.hasValue) {
-      try {
-        categoryName = categoriesAsync.value!.firstWhere((c) => c.id == _selectedCategory).name;
-      } catch (e) {
-        categoryName = 'Unknown';
+  Future<void> _pickDeadline() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2050),
+    );
+    if (date != null) {
+      if (!mounted) return;
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (time != null) {
+        setState(() {
+          _selectedDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
+        });
       }
     }
-
-    return InkWell(
-      onTap: () => _showCategoryPicker(categoriesAsync),
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        height: 110,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'CATEGORY',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-            ),
-            Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.architecture, size: 16, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    categoryName,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                ),
-                Icon(Icons.unfold_more, size: 20, color: Theme.of(context).colorScheme.outline),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDeadlineCard() {
-    return InkWell(
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2050),
-        );
-        if (date != null) {
-          if (!context.mounted) return;
-          final time = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.now(),
-          );
-          if (time != null) {
-            setState(() {
-              _selectedDate = DateTime(
-                date.year,
-                date.month,
-                date.day,
-                time.hour,
-                time.minute,
-              );
-            });
-          }
-        }
-      },
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        height: 110,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'DEADLINE',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.2,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-            ),
-            Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.calendar_month, size: 16, color: Theme.of(context).colorScheme.primary),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _selectedDate != null ? DateFormat('MMM d, h:mm a').format(_selectedDate!) : 'Not set',
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPrioritySelector() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      padding: const EdgeInsets.all(6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: ['Low', 'Medium', 'High'].map((p) {
-          final isSelected = _priority == p;
-
-          Color bgColor = Colors.transparent;
-          Color textColor = Theme.of(context).colorScheme.onSurfaceVariant;
-          IconData iconData = Icons.horizontal_rule;
-
-          if (p == 'Low') iconData = Icons.keyboard_arrow_down;
-          if (p == 'High') iconData = Icons.keyboard_arrow_up;
-
-          if (isSelected) {
-            bgColor = Theme.of(context).colorScheme.surface;
-            if (p == 'High') {
-              bgColor = Colors.orange.shade800;
-              textColor = Colors.white;
-            } else {
-              textColor = Theme.of(context).colorScheme.primary;
-            }
-          }
-
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _priority = p),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: (isSelected && p == 'High')
-                      ? [BoxShadow(color: Colors.orange.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
-                      : (isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))] : []),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(iconData, size: 18, color: textColor),
-                    const SizedBox(width: 6),
-                    Text(
-                      p,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: textColor,
-                            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return InkWell(
-      onTap: _saveTask,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              AppTheme.primaryColor.withOpacity(0.7),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primaryColor.withOpacity(0.3),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Save Task',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            const SizedBox(width: 12),
-            const Icon(Icons.check_circle, color: Colors.white),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _showCategoryPicker(AsyncValue<List<TaskCategory>> categoriesAsync) async {

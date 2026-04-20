@@ -38,6 +38,8 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
       _selectedDate = widget.taskToEdit!.deadline;
       _priority = widget.taskToEdit!.priority;
       _selectedCategory = widget.taskToEdit!.categoryId;
+    } else {
+      _selectedDate = DateTime.now();
     }
   }
 

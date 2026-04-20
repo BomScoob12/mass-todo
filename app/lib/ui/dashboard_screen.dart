@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_with_category.dart';
+import 'package:app/models/task_model.dart';
+import 'package:app/providers/category_provider.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/ui/widgets/dashboard/bento_grid_stats.dart';
 import 'package:app/ui/widgets/dashboard/next_up_card.dart';
@@ -12,6 +13,19 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(tasksStatsProvider);
+    final nextTask = stats['nextUp'] as TaskItem?;
+    final categoriesAsync = ref.watch(categoryProvider);
+    final nextCategory = categoriesAsync.maybeWhen(
+      data: (categories) {
+        if (nextTask == null) return null;
+        try {
+          return categories.firstWhere((c) => c.id == nextTask.categoryId);
+        } catch (_) {
+          return TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
+        }
+      },
+      orElse: () => null,
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -44,7 +58,10 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: 32),
 
           // Next Up
-          NextUpCard(taskWithCat: stats['nextUp'] as TaskWithCategory?),
+          NextUpCard(
+            task: nextTask,
+            category: nextCategory,
+          ),
           const SizedBox(height: 32),
 
           // Weekly Progress

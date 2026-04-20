@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/models/task_model.dart';
-import 'package:app/models/task_with_category.dart';
+
 import 'package:app/providers/database_providers.dart';
 import 'package:app/providers/category_provider.dart';
 
@@ -62,31 +62,11 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 }
 
-// Derived providers
-final tasksWithCategoryProvider = Provider<AsyncValue<List<TaskWithCategory>>>((ref) {
-  final tasksAsync = ref.watch(taskListProvider);
-  final categoriesAsync = ref.watch(categoryProvider);
-
-  return tasksAsync.whenData((tasks) {
-    return categoriesAsync.maybeWhen(
-      data: (categories) => tasks.map((task) {
-        final category = categories.firstWhere(
-          (c) => c.id == task.categoryId,
-          orElse: () => TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E'),
-        );
-        return TaskWithCategory(task: task, category: category);
-      }).toList(),
-      orElse: () => tasks.map((task) => TaskWithCategory(task: task)).toList(),
-    );
-  });
-});
-
 final tasksStatsProvider = Provider((ref) {
-  final tasksWithCategoryAsync = ref.watch(tasksWithCategoryProvider);
+  final tasksAsync = ref.watch(taskListProvider);
   
-  return tasksWithCategoryAsync.when(
-    data: (tasksWithCat) {
-      final tasks = tasksWithCat.map((twc) => twc.task).toList();
+  return tasksAsync.when(
+    data: (tasks) {
       final total = tasks.length;
       final completed = tasks.where((t) => t.isCompleted).length;
       final pending = total - completed;
@@ -114,44 +94,31 @@ final tasksStatsProvider = Provider((ref) {
       }
       final double weeklyProgress = weeklyTotal > 0 ? weeklyCompleted / weeklyTotal : 0.0;
       
-      final pendingTasksWithCat = tasksWithCat.where((twc) => !twc.task.isCompleted).toList();
-      pendingTasksWithCat.sort((a, b) {
-        final taskA = a.task;
-        final taskB = b.task;
-        if (taskA.deadline == null && taskB.deadline == null) return _comparePriority(taskA.priority, taskB.priority);
-        if (taskA.deadline == null) return 1;
-        if (taskB.deadline == null) return -1;
-        final dateCompare = taskA.deadline!.compareTo(taskB.deadline!);
-        if (dateCompare == 0) {
-          return _comparePriority(taskA.priority, taskB.priority);
-        }
-        return dateCompare;
+      final pendingTasks = tasks.where((t) => !t.isCompleted).toList();
+      pendingTasks.sort((a, b) {
+        if (a.deadline == null && b.deadline == null) return 0;
+        if (a.deadline == null) return 1;
+        if (b.deadline == null) return -1;
+        return a.deadline!.compareTo(b.deadline!);
       });
       
-      final nextPriority = pendingTasksWithCat.isNotEmpty ? pendingTasksWithCat.first : null;
+      final nextPriority = pendingTasks.isNotEmpty ? pendingTasks.first : null;
 
       return {
         'total': total,
         'completed': completed,
         'pending': pending,
         'completionRate': completionRate,
-        'nextPriority': nextPriority,
+        'nextUp': nextPriority,
         'today': todayCount,
         'weeklyProgress': weeklyProgress,
       };
     },
     loading: () => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0, 'weeklyProgress': 0.0
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextUp': null, 'today': 0, 'weeklyProgress': 0.0
     },
     error: (error, stack) => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0, 'weeklyProgress': 0.0
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextUp': null, 'today': 0, 'weeklyProgress': 0.0
     },
   );
 });
-
-int _comparePriority(String a, String b) {
-  const priorityMap = {'high': 3, 'medium': 2, 'low': 1};
-  final aVal = priorityMap[a.toLowerCase()] ?? 0;
-  final bVal = priorityMap[b.toLowerCase()] ?? 0;
-  return bVal.compareTo(aVal); // Descending (High first)
-}

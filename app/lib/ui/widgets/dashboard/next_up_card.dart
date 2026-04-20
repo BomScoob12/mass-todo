@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:app/models/task_with_category.dart';
+import 'package:app/models/task_model.dart';
 import 'package:app/ui/task_details_screen.dart';
 
 class NextUpCard extends StatelessWidget {
-  final TaskWithCategory? taskWithCat;
+  final TaskItem? task;
+  final TaskCategory? category;
 
-  const NextUpCard({super.key, this.taskWithCat});
+  const NextUpCard({super.key, this.task, this.category});
 
   @override
   Widget build(BuildContext context) {
-    final task = taskWithCat?.task;
-    final categoryName = taskWithCat?.category?.name ?? 'Task';
+    final task = this.task;
+    final categoryName = category?.name ?? 'Task';
 
     return Column(
       children: [

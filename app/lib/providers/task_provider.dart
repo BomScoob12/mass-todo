@@ -70,6 +70,14 @@ final tasksStatsProvider = Provider((ref) {
       final pending = total - completed;
       final completionRate = total > 0 ? completed / total : 0.0;
       
+      final now = DateTime.now();
+      final todayCount = tasks.where((t) {
+        if (t.deadline == null) return false;
+        return t.deadline!.year == now.year &&
+               t.deadline!.month == now.month &&
+               t.deadline!.day == now.day;
+      }).length;
+      
       final pendingTasks = tasks.where((t) => !t.isCompleted).toList();
       pendingTasks.sort((a, b) {
         if (a.deadline == null && b.deadline == null) return 0;
@@ -86,13 +94,14 @@ final tasksStatsProvider = Provider((ref) {
         'pending': pending,
         'completionRate': completionRate,
         'nextPriority': nextPriority,
+        'today': todayCount,
       };
     },
     loading: () => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0
     },
     error: (error, stack) => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0
     },
   );
 });

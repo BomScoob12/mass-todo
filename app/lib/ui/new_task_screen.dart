@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class NewTaskScreen extends ConsumerStatefulWidget {
-  const NewTaskScreen({super.key});
+  final TaskItem? taskToEdit;
+  
+  const NewTaskScreen({super.key, this.taskToEdit});
 
   @override
   ConsumerState<NewTaskScreen> createState() => _NewTaskScreenState();
@@ -24,6 +26,20 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   String? _selectedCategory;
   bool _isCreatingCategory = false;
   final _newCategoryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.taskToEdit != null) {
+      _nameController.text = widget.taskToEdit!.name;
+      if (widget.taskToEdit!.description != null) {
+        _descriptionController.text = widget.taskToEdit!.description!;
+      }
+      _selectedDate = widget.taskToEdit!.deadline;
+      _priority = widget.taskToEdit!.priority;
+      _selectedCategory = widget.taskToEdit!.categoryId;
+    }
+  }
 
   @override
   void dispose() {
@@ -53,17 +69,28 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         );
       }
 
-      final task = TaskItem(
-        id: uuid,
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
-        categoryId: finalCategoryId,
-        deadline: _selectedDate,
-        priority: _priority,
-        createdAt: DateTime.now(),
-      );
-
-      ref.read(taskListProvider.notifier).addTask(task);
+      if (widget.taskToEdit != null) {
+        final updatedTask = widget.taskToEdit!.copyWith(
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          categoryId: finalCategoryId,
+          deadline: _selectedDate,
+          priority: _priority,
+        );
+        ref.read(taskListProvider.notifier).updateTask(updatedTask);
+      } else {
+        final task = TaskItem(
+          id: uuid,
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          categoryId: finalCategoryId,
+          deadline: _selectedDate,
+          priority: _priority,
+          createdAt: DateTime.now(),
+        );
+        ref.read(taskListProvider.notifier).addTask(task);
+      }
+      
       Navigator.of(context).pop();
     }
   }
@@ -74,7 +101,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Task'),
+        title: Text(widget.taskToEdit == null ? 'New Task' : 'Edit Task'),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),

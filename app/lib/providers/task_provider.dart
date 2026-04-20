@@ -78,6 +78,20 @@ final tasksStatsProvider = Provider((ref) {
                t.deadline!.day == now.day;
       }).length;
       
+      final int currentWeekday = now.weekday; 
+      final DateTime startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: currentWeekday - 1));
+      final DateTime endOfWeek = startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+      
+      int weeklyTotal = 0;
+      int weeklyCompleted = 0;
+      for (final t in tasks) {
+         if (t.deadline != null && t.deadline!.isAfter(startOfWeek.subtract(const Duration(seconds: 1))) && t.deadline!.isBefore(endOfWeek.add(const Duration(seconds: 1)))) {
+             weeklyTotal++;
+             if (t.isCompleted) weeklyCompleted++;
+         }
+      }
+      final double weeklyProgress = weeklyTotal > 0 ? weeklyCompleted / weeklyTotal : 0.0;
+      
       final pendingTasks = tasks.where((t) => !t.isCompleted).toList();
       pendingTasks.sort((a, b) {
         if (a.deadline == null && b.deadline == null) return 0;
@@ -95,13 +109,14 @@ final tasksStatsProvider = Provider((ref) {
         'completionRate': completionRate,
         'nextPriority': nextPriority,
         'today': todayCount,
+        'weeklyProgress': weeklyProgress,
       };
     },
     loading: () => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0, 'weeklyProgress': 0.0
     },
     error: (error, stack) => {
-      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0
+      'total': 0, 'completed': 0, 'pending': 0, 'completionRate': 0.0, 'nextPriority': null, 'today': 0, 'weeklyProgress': 0.0
     },
   );
 });

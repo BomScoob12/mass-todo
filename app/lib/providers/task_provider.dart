@@ -60,6 +60,16 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
       state = AsyncValue.error(e, stack);
     }
   }
+
+  Future<void> deleteTasksByCategoryId(String categoryId) async {
+    state = const AsyncValue.loading();
+    try {
+      await ref.read(taskRepositoryProvider).deleteTasksByCategoryId(categoryId);
+      state = AsyncValue.data(await _fetchTasks());
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
 }
 
 final tasksStatsProvider = Provider((ref) {

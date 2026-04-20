@@ -49,4 +49,13 @@ class TaskRepository {
       whereArgs: [id],
     );
   }
+
+  Future<int> deleteTasksByCategoryId(String categoryId) async {
+    final db = await dbHelper.database;
+    return await db.delete(
+      'tasks',
+      where: 'categoryId = ?',
+      whereArgs: [categoryId],
+    );
+  }
 }

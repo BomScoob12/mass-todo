@@ -35,6 +35,17 @@ class CategoryNotifier extends AsyncNotifier<List<TaskCategory>> {
     }
   }
 
+  Future<void> updateCategory(TaskCategory category) async {
+    state = const AsyncValue.loading();
+    try {
+      await ref.read(categoryRepositoryProvider).updateCategory(category);
+      final categories = await _fetchCategories();
+      state = AsyncValue.data(categories);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
   Future<void> deleteCategory(String id) async {
     state = const AsyncValue.loading();
     try {

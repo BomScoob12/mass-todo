@@ -4,6 +4,7 @@ import 'package:app/models/task_model.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/providers/category_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:app/ui/new_task_screen.dart';
 
 class TaskDetailsScreen extends ConsumerWidget {
   final TaskItem task;
@@ -12,24 +13,48 @@ class TaskDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // We watch tasks list so that if we edit the task, this screen updates
+    final tasksAsync = ref.watch(taskListProvider);
     final categoriesAsync = ref.watch(categoryProvider);
+
+    TaskItem? currentTask = task;
+    if (tasksAsync.hasValue) {
+      try {
+        currentTask = tasksAsync.value!.firstWhere((t) => t.id == task.id);
+      } catch (e) {
+        // Task might have been deleted locally
+      }
+    }
+    
+    if (currentTask == null) {
+      return const Scaffold(body: Center(child: Text('Task not found')));
+    }
+
     String categoryName = 'Unknown';
     if (categoriesAsync.hasValue) {
       try {
-        categoryName = categoriesAsync.value!.firstWhere((c) => c.id == task.categoryId).name;
+        categoryName = categoriesAsync.value!.firstWhere((c) => c.id == currentTask!.categoryId).name;
       } catch (e) {
-        categoryName = 'Unknown';
+        categoryName = 'Other';
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: const Text('Detail', style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.edit_outlined),
             onPressed: () {
-              // Show confirmation
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => NewTaskScreen(taskToEdit: currentTask),
+              ));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+            onPressed: () {
               showDialog(
                 context: context,
                 builder: (ctx) => AlertDialog(
@@ -39,9 +64,9 @@ class TaskDetailsScreen extends ConsumerWidget {
                     TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                     TextButton(
                       onPressed: () {
-                        ref.read(taskListProvider.notifier).deleteTask(task.id);
-                        Navigator.pop(ctx); // Close dialog
-                        Navigator.pop(context); // Go back
+                        ref.read(taskListProvider.notifier).deleteTask(currentTask!.id);
+                        Navigator.pop(ctx); 
+                        Navigator.pop(context); 
                       },
                       child: const Text('Delete', style: TextStyle(color: Colors.red)),
                     ),
@@ -50,6 +75,7 @@ class TaskDetailsScreen extends ConsumerWidget {
               );
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
@@ -58,65 +84,92 @@ class TaskDetailsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Transform.scale(
-                  scale: 1.5,
-                  child: Checkbox(
-                    value: task.isCompleted,
-                    shape: const CircleBorder(),
-                    onChanged: (val) {
-                      ref.read(taskListProvider.notifier).toggleTaskCompletion(task.id);
-                      Navigator.pop(context); // Go back to update list
-                    },
+                GestureDetector(
+                  onTap: () {
+                     ref.read(taskListProvider.notifier).toggleTaskCompletion(currentTask!.id);
+                  },
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    margin: const EdgeInsets.only(top: 4, right: 16),
+                    decoration: BoxDecoration(
+                      color: currentTask.isCompleted ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                      border: Border.all(
+                        color: currentTask.isCompleted ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: currentTask.isCompleted ? const Icon(Icons.check, size: 20, color: Colors.white) : null,
                   ),
                 ),
-                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    task.name,
+                    currentTask.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                          decoration: currentTask.isCompleted ? TextDecoration.lineThrough : null,
+                          color: currentTask.isCompleted ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 32),
-            _buildDetailRow(context, Icons.folder, 'Category', categoryName),
-            const Divider(height: 32),
-            _buildDetailRow(
-              context,
-              Icons.calendar_month,
-              'Deadline',
-              task.deadline != null ? DateFormat('MMMM d, yyyy - h:mm a').format(task.deadline!) : 'No deadline',
-            ),
-            const Divider(height: 32),
-            _buildDetailRow(context, Icons.flag, 'Priority', task.priority),
-            const Divider(height: 32),
-            if (task.description != null && task.description!.isNotEmpty) ...[
-              Text(
-                'Description',
-                style: Theme.of(context).textTheme.titleLarge,
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(24.0),
               ),
-              const SizedBox(height: 8),
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                   _buildDetailRow(context, Icons.category_outlined, 'Category', categoryName),
+                   const Divider(height: 32),
+                   _buildDetailRow(
+                      context,
+                      Icons.schedule,
+                      'Deadline',
+                      currentTask.deadline != null ? DateFormat('MMMM d, yyyy - h:mm a').format(currentTask.deadline!) : 'Not set',
+                    ),
+                   const Divider(height: 32),
+                   _buildDetailRow(context, Icons.flag_outlined, 'Priority', currentTask.priority),
+                ],
+              ),
+            ),
+            if (currentTask.description != null && currentTask.description!.isNotEmpty) ...[
+              const SizedBox(height: 32),
+              Text(
+                'Notes',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardTheme.color,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                  color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2)),
                 ),
                 child: Text(
-                  task.description!,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  currentTask.description!,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                     color: Theme.of(context).colorScheme.onSurfaceVariant,
+                     height: 1.6,
+                  ),
                 ),
               ),
             ],
             const SizedBox(height: 48),
-            Text(
-              'Created on ${DateFormat('MMM d, yyyy').format(task.createdAt)}',
-              style: Theme.of(context).textTheme.bodyMedium,
+            Center(
+               child: Text(
+                 'Created on ${DateFormat('MMM d, yyyy').format(currentTask.createdAt)}',
+                 style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+               ),
             ),
           ],
         ),
@@ -127,14 +180,21 @@ class TaskDetailsScreen extends ConsumerWidget {
   Widget _buildDetailRow(BuildContext context, IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: Theme.of(context).colorScheme.primary),
+        Container(
+           padding: const EdgeInsets.all(12),
+           decoration: BoxDecoration(
+             color: Theme.of(context).colorScheme.surface,
+             borderRadius: BorderRadius.circular(12),
+           ),
+           child: Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        ),
         const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: 4),
-            Text(value, style: Theme.of(context).textTheme.titleLarge),
+            Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline)),
+            const SizedBox(height: 2),
+            Text(value, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
           ],
         ),
       ],

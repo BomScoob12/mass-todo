@@ -23,37 +23,51 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
     final tasksAsync = ref.watch(taskListProvider);
     final categoriesAsync = ref.watch(categoryProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Curated Inventory',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
-                        ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Focus on what matters next.',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Curated Inventory',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Focus on what matters next.',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
             ),
-            _buildCategoryFilters(categoriesAsync),
-            Expanded(
-              child: _buildBody(tasksAsync, categoriesAsync),
-            ),
-          ],
-        );
+          ),
+          _buildCategoryFilters(categoriesAsync),
+          Expanded(
+            child: _buildBody(tasksAsync, categoriesAsync),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const NewTaskScreen()),
+          );
+        },
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 4,
+        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onTertiary, size: 30),
+      ),
+    );
   }
 
   Widget _buildCategoryFilters(AsyncValue<List<TaskCategory>> categoriesAsync) {

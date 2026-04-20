@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/ui/settings_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -20,7 +21,9 @@ class DashboardHeader extends StatelessWidget {
           icon: const Icon(Icons.settings_outlined),
           color: Theme.of(context).colorScheme.primary,
           onPressed: () {
-            // TODO: Implement settings navigation
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
           },
         ),
       ],

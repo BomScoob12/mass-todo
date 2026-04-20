@@ -42,7 +42,7 @@ class NextUpCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
             ),
             child: Text(
-              'No pending tasks. You are all caught up!',
+              'No pending tasks for today. You are all caught up!',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),

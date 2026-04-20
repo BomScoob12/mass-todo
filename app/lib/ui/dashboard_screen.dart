@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:app/models/task_model.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/ui/new_task_screen.dart';
 import 'package:app/ui/widgets/dashboard/dashboard_header.dart';
@@ -45,14 +46,14 @@ class DashboardScreen extends ConsumerWidget {
 
               // Summary Bento Grid
               BentoGridStats(
-                todayTasks: stats['today'] ?? 0,
-                pendingTasks: stats['pending'] ?? 0,
-                completedTasks: stats['completed'] ?? 0,
+                todayTasks: (stats['today'] ?? 0) as int,
+                pendingTasks: (stats['pending'] ?? 0) as int,
+                completedTasks: (stats['completed'] ?? 0) as int,
               ),
               const SizedBox(height: 32),
 
               // Next Up
-              NextUpCard(task: stats['nextPriority']),
+              NextUpCard(task: stats['nextPriority'] as TaskItem?),
               const SizedBox(height: 32),
 
               // Weekly Progress

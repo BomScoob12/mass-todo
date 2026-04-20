@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
+import 'package:app/models/task_with_category.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/ui/new_task_screen.dart';
 import 'package:app/ui/widgets/dashboard/dashboard_header.dart';
@@ -49,7 +49,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 32),
 
               // Next Up
-              NextUpCard(task: stats['nextPriority'] as TaskItem?),
+              NextUpCard(taskWithCat: stats['nextPriority'] as TaskWithCategory?),
               const SizedBox(height: 32),
 
               // Weekly Progress

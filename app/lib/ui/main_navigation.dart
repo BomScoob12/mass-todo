@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/ui/dashboard_screen.dart';
 import 'package:app/ui/my_tasks_screen.dart';
+import 'package:app/ui/widgets/dashboard/dashboard_header.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -20,6 +21,11 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const DashboardHeader(),
+        automaticallyImplyLeading: false,
+        titleSpacing: 24,
+      ),
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,

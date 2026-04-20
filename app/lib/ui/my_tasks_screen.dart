@@ -23,29 +23,11 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
     final tasksAsync = ref.watch(taskListProvider);
     final categoriesAsync = ref.watch(categoryProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tasks', style: TextStyle(fontWeight: FontWeight.bold)),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_circle, color: AppTheme.primaryColor),
-            iconSize: 32,
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const NewTaskScreen(),
-              ));
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -71,9 +53,7 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
               child: _buildBody(tasksAsync, categoriesAsync),
             ),
           ],
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildCategoryFilters(AsyncValue<List<TaskCategory>> categoriesAsync) {

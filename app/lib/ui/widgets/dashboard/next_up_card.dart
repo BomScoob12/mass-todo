@@ -15,21 +15,14 @@ class NextUpCard extends StatelessWidget {
     final categoryName = category?.name ?? 'Task';
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Next Up',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Icon(Icons.more_horiz,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20),
-          ],
+        Text(
+          'Next Up',
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         if (task == null)

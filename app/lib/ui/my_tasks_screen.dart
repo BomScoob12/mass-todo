@@ -17,6 +17,7 @@ class MyTasksScreen extends ConsumerStatefulWidget {
 
 class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
   String? _selectedCategoryId;
+  bool _hideCompletedTasks = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,22 +31,56 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  'Curated Inventory',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                      ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Curated Inventory',
+                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Focus on what matters next.',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Focus on what matters next.',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  position: PopupMenuPosition.under,
+                  onSelected: (value) {
+                    if (value == 'toggle_completed') {
+                      setState(() {
+                        _hideCompletedTasks = !_hideCompletedTasks;
+                      });
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'toggle_completed',
+                      child: Row(
+                        children: [
+                          Icon(
+                            _hideCompletedTasks ? Icons.visibility : Icons.visibility_off,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(_hideCompletedTasks ? 'Show Completed' : 'Hide Completed'),
+                        ],
                       ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -140,14 +175,18 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
   Widget _buildGroupedList(List<TaskItem> tasks, List<TaskCategory> categories) {
     final groups = <TaskCategory, List<TaskItem>>{};
 
+    final categoryMap = {for (var c in categories) c.id: c};
+    final unknownCategory = TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
+
     for (final task in tasks) {
+      if (_hideCompletedTasks && task.isCompleted) {
+        continue;
+      }
       if (_selectedCategoryId != null && task.categoryId != _selectedCategoryId) {
         continue;
       }
-      final category = categories.firstWhere(
-        (c) => c.id == task.categoryId,
-        orElse: () => TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E'),
-      );
+      
+      final category = categoryMap[task.categoryId] ?? unknownCategory;
       groups.putIfAbsent(category, () => []).add(task);
     }
 

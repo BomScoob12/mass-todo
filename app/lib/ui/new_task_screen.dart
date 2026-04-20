@@ -271,12 +271,18 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   Future<void> _showCategoryPicker(AsyncValue<List<TaskCategory>> categoriesAsync) async {
     await showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
             return Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.only(
+                left: 24.0,
+                right: 24.0,
+                top: 24.0,
+                bottom: 24.0 + MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,

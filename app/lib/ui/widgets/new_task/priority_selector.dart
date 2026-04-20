@@ -26,17 +26,22 @@ class PrioritySelector extends StatelessWidget {
           Color bgColor = Colors.transparent;
           Color textColor = Theme.of(context).colorScheme.onSurfaceVariant;
           IconData iconData = Icons.horizontal_rule;
+          List<BoxShadow> boxShadow = [];
 
           if (p == 'Low') iconData = Icons.keyboard_arrow_down;
           if (p == 'High') iconData = Icons.keyboard_arrow_up;
 
           if (isSelected) {
-            bgColor = Theme.of(context).colorScheme.surface;
-            if (p == 'High') {
-              bgColor = Colors.orange.shade800;
-              textColor = Colors.white;
-            } else {
-              textColor = Theme.of(context).colorScheme.primary;
+            textColor = Colors.white;
+            if (p == 'Low') {
+              bgColor = Colors.grey.shade600;
+              boxShadow = [BoxShadow(color: Colors.grey.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
+            } else if (p == 'Medium') {
+              bgColor = Colors.orange.shade600;
+              boxShadow = [BoxShadow(color: Colors.orange.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
+            } else if (p == 'High') {
+              bgColor = Colors.red.shade600;
+              boxShadow = [BoxShadow(color: Colors.red.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
             }
           }
 
@@ -49,9 +54,7 @@ class PrioritySelector extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(24),
-                  boxShadow: (isSelected && p == 'High')
-                      ? [BoxShadow(color: Colors.orange.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
-                      : (isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))] : []),
+                  boxShadow: boxShadow,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

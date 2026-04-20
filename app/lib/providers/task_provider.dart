@@ -94,15 +94,18 @@ final tasksStatsProvider = Provider((ref) {
       }
       final double weeklyProgress = weeklyTotal > 0 ? weeklyCompleted / weeklyTotal : 0.0;
       
-      final pendingTasks = tasks.where((t) => !t.isCompleted).toList();
-      pendingTasks.sort((a, b) {
-        if (a.deadline == null && b.deadline == null) return 0;
-        if (a.deadline == null) return 1;
-        if (b.deadline == null) return -1;
+      final pendingTodayTasks = tasks.where((t) {
+        if (t.isCompleted || t.deadline == null) return false;
+        return t.deadline!.year == now.year &&
+               t.deadline!.month == now.month &&
+               t.deadline!.day == now.day;
+      }).toList();
+      
+      pendingTodayTasks.sort((a, b) {
         return a.deadline!.compareTo(b.deadline!);
       });
       
-      final nextPriority = pendingTasks.isNotEmpty ? pendingTasks.first : null;
+      final nextPriority = pendingTodayTasks.isNotEmpty ? pendingTodayTasks.first : null;
 
       return {
         'total': total,

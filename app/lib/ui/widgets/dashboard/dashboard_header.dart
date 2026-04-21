@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/ui/settings_screen.dart';
+import 'package:masstodo/ui/settings_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});

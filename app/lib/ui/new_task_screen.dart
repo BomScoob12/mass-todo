@@ -13,7 +13,7 @@ import 'package:masstodo/ui/widgets/new_task/custom_text_field.dart';
 
 class NewTaskScreen extends ConsumerStatefulWidget {
   final TaskItem? taskToEdit;
-  
+
   const NewTaskScreen({super.key, this.taskToEdit});
 
   @override
@@ -24,7 +24,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   DateTime? _selectedDate;
   String _priority = 'Low';
   String? _selectedCategory;
@@ -58,27 +58,33 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
       if (_selectedCategory == null && !_isCreatingCategory) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select or create a category')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select or create a category')),
+        );
         return;
       }
 
       final uuid = const Uuid().v4();
       String finalCategoryId = _selectedCategory ?? '';
-      
+
       if (_isCreatingCategory && _newCategoryController.text.isNotEmpty) {
         finalCategoryId = const Uuid().v4();
-        ref.read(categoryProvider.notifier).addCategory(
-          TaskCategory(
-            id: finalCategoryId,
-            name: _newCategoryController.text.trim(),
-          ),
-        );
+        ref
+            .read(categoryProvider.notifier)
+            .addCategory(
+              TaskCategory(
+                id: finalCategoryId,
+                name: _newCategoryController.text.trim(),
+              ),
+            );
       }
 
       if (widget.taskToEdit != null) {
         final updatedTask = widget.taskToEdit!.copyWith(
           name: _nameController.text.trim(),
-          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty
+              ? null
+              : _descriptionController.text.trim(),
           categoryId: finalCategoryId,
           deadline: _selectedDate,
           priority: _priority,
@@ -88,7 +94,9 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         final task = TaskItem(
           id: uuid,
           name: _nameController.text.trim(),
-          description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty
+              ? null
+              : _descriptionController.text.trim(),
           categoryId: finalCategoryId,
           deadline: _selectedDate,
           priority: _priority,
@@ -96,7 +104,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         );
         ref.read(taskListProvider.notifier).addTask(task);
       }
-      
+
       Navigator.of(context).pop();
     }
   }
@@ -110,7 +118,9 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
       categoryName = 'New: ${_newCategoryController.text}';
     } else if (_selectedCategory != null && categoriesAsync.hasValue) {
       try {
-        categoryName = categoriesAsync.value!.firstWhere((c) => c.id == _selectedCategory).name;
+        categoryName = categoriesAsync.value!
+            .firstWhere((c) => c.id == _selectedCategory)
+            .name;
       } catch (e) {
         categoryName = 'Unknown';
       }
@@ -130,9 +140,9 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                   Text(
                     widget.taskToEdit == null ? 'New Task' : 'Edit Task',
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
-                        ),
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
@@ -141,12 +151,15 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest
+                            .withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.close),
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -182,12 +195,17 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                           children: [
                             Expanded(
                               child: MetadataSelectorCard(
-                                onTap: () => _showCategoryPicker(categoriesAsync),
+                                onTap: () =>
+                                    _showCategoryPicker(categoriesAsync),
                                 label: 'Category',
                                 valueText: categoryName,
                                 iconView: Icons.architecture,
-                                iconBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                                iconColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                                iconBackgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
+                                iconColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSecondaryContainer,
                                 hasTrailingIcon: true,
                               ),
                             ),
@@ -196,10 +214,19 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                               child: MetadataSelectorCard(
                                 onTap: _pickDeadline,
                                 label: 'Deadline',
-                                valueText: _selectedDate != null ? DateFormat('MMM d, h:mm a').format(_selectedDate!) : 'Not set',
+                                valueText: _selectedDate != null
+                                    ? DateFormat(
+                                        'MMM d, h:mm a',
+                                      ).format(_selectedDate!)
+                                    : 'Not set',
                                 iconView: Icons.calendar_month,
-                                iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.4),
-                                iconColor: Theme.of(context).colorScheme.primary,
+                                iconBackgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer
+                                    .withValues(alpha: 0.4),
+                                iconColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -210,7 +237,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                           currentPriority: _priority,
                           onChanged: (val) => setState(() => _priority = val),
                         ),
-                        const SizedBox(height: 48), 
+                        const SizedBox(height: 48),
                       ],
                     ),
                   ),
@@ -232,10 +259,10 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
       child: Text(
         text,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              letterSpacing: 0.5,
-            ),
+          fontWeight: FontWeight.w700,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -267,11 +294,15 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     }
   }
 
-  Future<void> _showCategoryPicker(AsyncValue<List<TaskCategory>> categoriesAsync) async {
+  Future<void> _showCategoryPicker(
+    AsyncValue<List<TaskCategory>> categoriesAsync,
+  ) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
@@ -286,29 +317,54 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Categories', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+                  Text(
+                    'Categories',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   if (categoriesAsync.hasValue)
-                    ...categoriesAsync.value!.map((c) => ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(c.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
-                          onTap: () {
-                            setState(() {
-                              _selectedCategory = c.id;
-                              _isCreatingCategory = false;
-                            });
-                            Navigator.pop(context);
-                          },
-                        )),
+                    ...categoriesAsync.value!.map(
+                      (c) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          c.name,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _selectedCategory = c.id;
+                            _isCreatingCategory = false;
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
                   const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Container(
-                       width: 36, height: 36, 
-                       decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, shape: BoxShape.circle),
-                       child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimaryContainer, size: 20)
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        size: 20,
+                      ),
                     ),
-                    title: Text('Create New Category', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)),
+                    title: Text(
+                      'Create New Category',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     onTap: () {
                       setSheetState(() {
                         _isCreatingCategory = true;
@@ -326,8 +382,14 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                               decoration: InputDecoration(
                                 hintText: 'Enter category name...',
                                 filled: true,
-                                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                                fillColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest
+                                    .withValues(alpha: 0.3),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
                               ),
                               onChanged: (_) {
                                 setState(() {});
@@ -336,7 +398,11 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                           ),
                           const SizedBox(width: 8),
                           IconButton(
-                            icon: Icon(Icons.check_circle, size: 36, color: Theme.of(context).colorScheme.primary),
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 36,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                             onPressed: () {
                               if (_newCategoryController.text.isNotEmpty) {
                                 setState(() {
@@ -346,16 +412,16 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                                 Navigator.pop(context);
                               }
                             },
-                          )
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                   const SizedBox(height: 24),
                 ],
               ),
             );
-          }
+          },
         );
       },
     );

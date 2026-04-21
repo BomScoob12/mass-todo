@@ -12,65 +12,72 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stats = ref.watch(tasksStatsProvider);
-    final nextTask = stats['nextUp'] as TaskItem?;
+    final statsAsync = ref.watch(tasksStatsProvider);
     final categoriesAsync = ref.watch(categoryProvider);
-    final nextCategory = categoriesAsync.maybeWhen(
-      data: (categories) {
-        if (nextTask == null) return null;
-        try {
-          return categories.firstWhere((c) => c.id == nextTask.categoryId);
-        } catch (_) {
-          return TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
-        }
+
+    return statsAsync.when(
+      data: (stats) {
+        final nextTask = stats['nextUp'] as TaskItem?;
+        final nextCategory = categoriesAsync.maybeWhen(
+          data: (categories) {
+            if (nextTask == null) return null;
+            try {
+              return categories.firstWhere((c) => c.id == nextTask.categoryId);
+            } catch (_) {
+              return TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
+            }
+          },
+          orElse: () => null,
+        );
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Hero Greeting
+              Text(
+                'Design your day',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'You have ${stats['pending'] ?? 0} tasks requiring attention.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: 32),
+
+              // Summary Bento Grid
+              BentoGridStats(
+                todayTasks: (stats['today'] ?? 0) as int,
+                pendingTasks: (stats['pending'] ?? 0) as int,
+                completedTasks: (stats['completed'] ?? 0) as int,
+              ),
+              const SizedBox(height: 32),
+
+              // Next Up
+              NextUpCard(
+                task: nextTask,
+                category: nextCategory,
+              ),
+              const SizedBox(height: 32),
+
+              // Weekly Progress
+              WeeklyProgressBar(rawProgress: stats['weeklyProgress'] as double? ?? 0.0),
+
+              // Bottom padding
+              const SizedBox(height: 100),
+            ],
+          ),
+        );
       },
-      orElse: () => null,
-    );
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Hero Greeting
-          Text(
-            'Design your day',
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.5,
-                ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'You have ${stats['pending'] ?? 0} tasks requiring attention.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          const SizedBox(height: 32),
-
-          // Summary Bento Grid
-          BentoGridStats(
-            todayTasks: (stats['today'] ?? 0) as int,
-            pendingTasks: (stats['pending'] ?? 0) as int,
-            completedTasks: (stats['completed'] ?? 0) as int,
-          ),
-          const SizedBox(height: 32),
-
-          // Next Up
-          NextUpCard(
-            task: nextTask,
-            category: nextCategory,
-          ),
-          const SizedBox(height: 32),
-
-          // Weekly Progress
-          WeeklyProgressBar(rawProgress: stats['weeklyProgress'] as double? ?? 0.0),
-          
-          // Bottom padding
-          const SizedBox(height: 100),
-        ],
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
     );
   }
 }

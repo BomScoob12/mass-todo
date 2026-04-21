@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/providers/category_provider.dart';
+import 'package:app/providers/tasks_filter_provider.dart';
 import 'package:app/ui/app_theme.dart';
 import 'package:app/models/task_model.dart';
 import 'package:intl/intl.dart';
@@ -17,12 +18,12 @@ class MyTasksScreen extends ConsumerStatefulWidget {
 
 class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
   String? _selectedCategoryId;
-  bool _hideCompletedTasks = false;
 
   @override
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(taskListProvider);
     final categoriesAsync = ref.watch(categoryProvider);
+    final showCompleted = ref.watch(showCompletedTasksProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -60,9 +61,7 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                   position: PopupMenuPosition.under,
                   onSelected: (value) {
                     if (value == 'toggle_completed') {
-                      setState(() {
-                        _hideCompletedTasks = !_hideCompletedTasks;
-                      });
+                      ref.read(showCompletedTasksProvider.notifier).toggle();
                     }
                   },
                   itemBuilder: (context) => [
@@ -71,12 +70,12 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                       child: Row(
                         children: [
                           Icon(
-                            _hideCompletedTasks ? Icons.visibility : Icons.visibility_off,
+                            showCompleted ? Icons.visibility_off : Icons.visibility,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
-                          Text(_hideCompletedTasks ? 'Show Completed' : 'Hide Completed'),
+                          Text(showCompleted ? 'Hide Completed' : 'Show Completed'),
                         ],
                       ),
                     ),
@@ -179,9 +178,6 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
     final unknownCategory = TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
 
     for (final task in tasks) {
-      if (_hideCompletedTasks && task.isCompleted) {
-        continue;
-      }
       if (_selectedCategoryId != null && task.categoryId != _selectedCategoryId) {
         continue;
       }

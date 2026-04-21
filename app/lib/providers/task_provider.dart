@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masstodo/models/task_model.dart';
-
 import 'package:masstodo/providers/database_providers.dart';
 import 'package:masstodo/providers/tasks_filter_provider.dart';
 
-final taskListProvider = AsyncNotifierProvider<TaskListNotifier, List<TaskItem>>(() {
-  return TaskListNotifier();
-});
+final taskListProvider =
+    AsyncNotifierProvider<TaskListNotifier, List<TaskItem>>(() {
+      return TaskListNotifier();
+    });
 
 class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   @override
@@ -17,7 +17,9 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<List<TaskItem>> _fetchTasks(bool includeCompleted) async {
-    return await ref.read(taskRepositoryProvider).getAllTasks(includeCompleted: includeCompleted);
+    return await ref
+        .read(taskRepositoryProvider)
+        .getAllTasks(includeCompleted: includeCompleted);
   }
 
   Future<void> addTask(TaskItem task) async {
@@ -73,7 +75,9 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   Future<void> deleteTasksByCategoryId(String categoryId) async {
     state = const AsyncValue.loading();
     try {
-      await ref.read(taskRepositoryProvider).deleteTasksByCategoryId(categoryId);
+      await ref
+          .read(taskRepositoryProvider)
+          .deleteTasksByCategoryId(categoryId);
       final showCompleted = ref.read(showCompletedTasksProvider);
       state = AsyncValue.data(await _fetchTasks(showCompleted));
       ref.invalidate(tasksStatsProvider);

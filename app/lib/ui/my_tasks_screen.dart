@@ -39,7 +39,8 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                   children: [
                     Text(
                       'Curated Inventory',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
                           ),
@@ -48,14 +49,19 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                     Text(
                       'Focus on what matters next.',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.more_horiz, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   position: PopupMenuPosition.under,
                   onSelected: (value) {
                     if (value == 'toggle_completed') {
@@ -68,12 +74,18 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                       child: Row(
                         children: [
                           Icon(
-                            showCompleted ? Icons.visibility_off : Icons.visibility,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            showCompleted
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
-                          Text(showCompleted ? 'Hide Completed' : 'Show Completed'),
+                          Text(
+                            showCompleted ? 'Hide Completed' : 'Show Completed',
+                          ),
                         ],
                       ),
                     ),
@@ -83,21 +95,23 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
             ),
           ),
           _buildCategoryFilters(categoriesAsync),
-          Expanded(
-            child: _buildBody(tasksAsync, categoriesAsync),
-          ),
+          Expanded(child: _buildBody(tasksAsync, categoriesAsync)),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const NewTaskScreen()),
-          );
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const NewTaskScreen()));
         },
         backgroundColor: Theme.of(context).colorScheme.tertiary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 4,
-        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onTertiary, size: 30),
+        child: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.onTertiary,
+          size: 30,
+        ),
       ),
     );
   }
@@ -114,9 +128,18 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
                 setState(() => _selectedCategoryId = null);
               }),
               ...categories.map((category) {
-                return _buildFilterChip(category.name, _selectedCategoryId == category.id, () {
-                  setState(() => _selectedCategoryId = _selectedCategoryId == category.id ? null : category.id);
-                });
+                return _buildFilterChip(
+                  category.name,
+                  _selectedCategoryId == category.id,
+                  () {
+                    setState(
+                      () => _selectedCategoryId =
+                          _selectedCategoryId == category.id
+                          ? null
+                          : category.id,
+                    );
+                  },
+                );
               }),
             ],
           ),
@@ -143,19 +166,22 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
           child: Text(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.onPrimaryContainer
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  letterSpacing: 0.5,
-                ),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimaryContainer
+                  : Theme.of(context).colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBody(AsyncValue<List<TaskItem>> tasksAsync, AsyncValue<List<TaskCategory>> categoriesAsync) {
+  Widget _buildBody(
+    AsyncValue<List<TaskItem>> tasksAsync,
+    AsyncValue<List<TaskCategory>> categoriesAsync,
+  ) {
     return tasksAsync.when(
       data: (tasks) {
         return categoriesAsync.when(
@@ -169,17 +195,25 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
     );
   }
 
-  Widget _buildGroupedList(List<TaskItem> tasks, List<TaskCategory> categories) {
+  Widget _buildGroupedList(
+    List<TaskItem> tasks,
+    List<TaskCategory> categories,
+  ) {
     final groups = <TaskCategory, List<TaskItem>>{};
 
     final categoryMap = {for (var c in categories) c.id: c};
-    final unknownCategory = TaskCategory(id: 'unknown', name: 'Other', colorHex: '#9E9E9E');
+    final unknownCategory = TaskCategory(
+      id: 'unknown',
+      name: 'Other',
+      colorHex: '#9E9E9E',
+    );
 
     for (final task in tasks) {
-      if (_selectedCategoryId != null && task.categoryId != _selectedCategoryId) {
+      if (_selectedCategoryId != null &&
+          task.categoryId != _selectedCategoryId) {
         continue;
       }
-      
+
       final category = categoryMap[task.categoryId] ?? unknownCategory;
       groups.putIfAbsent(category, () => []).add(task);
     }
@@ -189,8 +223,8 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
         child: Text(
           'No tasks found',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -204,15 +238,17 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
       itemBuilder: (context, index) {
         final category = sortedCategories[index];
         final categoryTasks = groups[category]!;
-        // Sort category tasks: incomplete first, then by priority/deadline if desired. 
+        // Sort category tasks: incomplete first, then by priority/deadline if desired.
         // For now, simpler: incomplete first.
         categoryTasks.sort((a, b) {
           if (a.isCompleted == b.isCompleted) {
-            return (a.deadline ?? DateTime.now()).compareTo(b.deadline ?? DateTime.now());
+            return (a.deadline ?? DateTime.now()).compareTo(
+              b.deadline ?? DateTime.now(),
+            );
           }
           return a.isCompleted ? 1 : -1;
         });
-        
+
         return TaskGroupSection(category: category, tasks: categoryTasks);
       },
     );

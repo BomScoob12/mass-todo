@@ -14,7 +14,7 @@ class PrioritySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(32),
       ),
       padding: const EdgeInsets.all(6),
@@ -35,13 +35,13 @@ class PrioritySelector extends StatelessWidget {
             textColor = Colors.white;
             if (p == 'Low') {
               bgColor = Colors.grey.shade600;
-              boxShadow = [BoxShadow(color: Colors.grey.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              boxShadow = [BoxShadow(color: Colors.grey.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
             } else if (p == 'Medium') {
               bgColor = Colors.orange.shade600;
-              boxShadow = [BoxShadow(color: Colors.orange.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              boxShadow = [BoxShadow(color: Colors.orange.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
             } else if (p == 'High') {
               bgColor = Colors.red.shade600;
-              boxShadow = [BoxShadow(color: Colors.red.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              boxShadow = [BoxShadow(color: Colors.red.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
             }
           }
 

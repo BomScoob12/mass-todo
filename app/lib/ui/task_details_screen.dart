@@ -98,7 +98,7 @@ class TaskDetailsScreen extends ConsumerWidget {
                   const SizedBox(height: 32),
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(24.0),
                     ),
                     padding: const EdgeInsets.all(24.0),
@@ -128,9 +128,9 @@ class TaskDetailsScreen extends ConsumerWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2)),
+                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2)),
                       ),
                       child: Text(
                         currentTask.description!,
@@ -163,7 +163,7 @@ class TaskDetailsScreen extends ConsumerWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: currentTask.isCompleted 
-                      ? Theme.of(context).colorScheme.surfaceVariant
+                      ? Theme.of(context).colorScheme.surfaceContainerHighest
                       : Theme.of(context).colorScheme.primary,
                   foregroundColor: currentTask.isCompleted
                       ? Theme.of(context).colorScheme.onSurfaceVariant

@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/providers/category_provider.dart';
 import 'package:app/providers/tasks_filter_provider.dart';
-import 'package:app/ui/app_theme.dart';
 import 'package:app/models/task_model.dart';
-import 'package:intl/intl.dart';
 import 'package:app/ui/new_task_screen.dart';
 import 'package:app/ui/widgets/tasks/task_group_section.dart';
 
@@ -139,7 +137,7 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
           decoration: BoxDecoration(
             color: isSelected
                 ? Theme.of(context).colorScheme.primaryContainer
-                : Theme.of(context).colorScheme.surfaceVariant,
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(32),
           ),
           child: Text(

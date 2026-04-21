@@ -23,7 +23,7 @@ class BentoGridStats extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -37,7 +37,7 @@ class BentoGridStats extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -84,7 +84,7 @@ class BentoGridStats extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Column(
@@ -118,7 +118,7 @@ class BentoGridStats extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Column(

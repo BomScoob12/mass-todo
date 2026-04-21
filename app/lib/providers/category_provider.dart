@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/providers/database_providers.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/providers/database_providers.dart';
 
 final categoryProvider = AsyncNotifierProvider<CategoryNotifier, List<TaskCategory>>(() {
   return CategoryNotifier();

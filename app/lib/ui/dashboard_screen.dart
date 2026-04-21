@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/providers/category_provider.dart';
-import 'package:app/providers/task_provider.dart';
-import 'package:app/ui/widgets/dashboard/bento_grid_stats.dart';
-import 'package:app/ui/widgets/dashboard/next_up_card.dart';
-import 'package:app/ui/widgets/dashboard/weekly_progress_bar.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/providers/category_provider.dart';
+import 'package:masstodo/providers/task_provider.dart';
+import 'package:masstodo/ui/widgets/dashboard/bento_grid_stats.dart';
+import 'package:masstodo/ui/widgets/dashboard/next_up_card.dart';
+import 'package:masstodo/ui/widgets/dashboard/weekly_progress_bar.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});

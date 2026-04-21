@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/ui/widgets/tasks/task_list_item.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/ui/widgets/tasks/task_list_item.dart';
 
 class TaskGroupSection extends StatelessWidget {
   final TaskCategory category;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/providers/task_provider.dart';
-import 'package:app/providers/category_provider.dart';
-import 'package:app/providers/tasks_filter_provider.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/ui/new_task_screen.dart';
-import 'package:app/ui/widgets/tasks/task_group_section.dart';
+import 'package:masstodo/providers/task_provider.dart';
+import 'package:masstodo/providers/category_provider.dart';
+import 'package:masstodo/providers/tasks_filter_provider.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/ui/new_task_screen.dart';
+import 'package:masstodo/ui/widgets/tasks/task_group_section.dart';
 
 class MyTasksScreen extends ConsumerStatefulWidget {
   const MyTasksScreen({super.key});

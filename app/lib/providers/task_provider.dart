@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
+import 'package:masstodo/models/task_model.dart';
 
-import 'package:app/providers/database_providers.dart';
-import 'package:app/providers/tasks_filter_provider.dart';
+import 'package:masstodo/providers/database_providers.dart';
+import 'package:masstodo/providers/tasks_filter_provider.dart';
 
 final taskListProvider = AsyncNotifierProvider<TaskListNotifier, List<TaskItem>>(() {
   return TaskListNotifier();

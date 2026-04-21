@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/providers/task_provider.dart';
-import 'package:app/providers/category_provider.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/providers/task_provider.dart';
+import 'package:masstodo/providers/category_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:app/ui/widgets/new_task/priority_selector.dart';
-import 'package:app/ui/widgets/new_task/gradient_save_button.dart';
-import 'package:app/ui/widgets/new_task/metadata_selector_card.dart';
-import 'package:app/ui/widgets/new_task/custom_text_field.dart';
+import 'package:masstodo/ui/widgets/new_task/priority_selector.dart';
+import 'package:masstodo/ui/widgets/new_task/gradient_save_button.dart';
+import 'package:masstodo/ui/widgets/new_task/metadata_selector_card.dart';
+import 'package:masstodo/ui/widgets/new_task/custom_text_field.dart';
 
 class NewTaskScreen extends ConsumerStatefulWidget {
   final TaskItem? taskToEdit;

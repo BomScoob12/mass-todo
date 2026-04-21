@@ -1,5 +1,5 @@
-import 'package:app/models/task_model.dart';
-import 'package:app/database/database_helper.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/database/database_helper.dart';
 
 class TaskRepository {
   final DatabaseHelper dbHelper;

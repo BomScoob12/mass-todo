@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/ui/app_theme.dart';
-import 'package:app/ui/main_navigation.dart';
+import 'package:masstodo/ui/app_theme.dart';
+import 'package:masstodo/ui/main_navigation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Offline Todo',
+      title: 'MassTodo',
       theme: AppTheme.lightTheme,
       home: const MainNavigation(),
       debugShowCheckedModeBanner: false,

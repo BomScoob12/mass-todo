@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app/ui/dashboard_screen.dart';
-import 'package:app/ui/my_tasks_screen.dart';
-import 'package:app/ui/widgets/dashboard/dashboard_header.dart';
-import 'package:app/ui/new_task_screen.dart';
+import 'package:masstodo/ui/dashboard_screen.dart';
+import 'package:masstodo/ui/my_tasks_screen.dart';
+import 'package:masstodo/ui/widgets/dashboard/dashboard_header.dart';
+import 'package:masstodo/ui/new_task_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

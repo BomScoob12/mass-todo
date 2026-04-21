@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:app/models/task_model.dart';
-import 'package:app/providers/task_provider.dart';
-import 'package:app/providers/category_provider.dart';
+import 'package:masstodo/models/task_model.dart';
+import 'package:masstodo/providers/task_provider.dart';
+import 'package:masstodo/providers/category_provider.dart';
 import 'package:intl/intl.dart';
-import 'package:app/ui/new_task_screen.dart';
+import 'package:masstodo/ui/new_task_screen.dart';
 
 class TaskDetailsScreen extends ConsumerWidget {
   final TaskItem task;

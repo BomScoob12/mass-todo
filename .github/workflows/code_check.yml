@@ -3,9 +3,9 @@ name: Code Check
 on:
   workflow_dispatch:
   push:
-    branches: [ "development" ]
+    branches: ['development']
   pull_request:
-    branches: [ "main", "development" ]
+    branches: ['main', 'development']
 
 jobs:
   code_check:

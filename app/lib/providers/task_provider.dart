@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masstodo/models/task_model.dart';
-
 import 'package:masstodo/providers/database_providers.dart';
 import 'package:masstodo/providers/tasks_filter_provider.dart';
 

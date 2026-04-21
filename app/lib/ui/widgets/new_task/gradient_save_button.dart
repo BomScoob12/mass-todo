@@ -21,12 +21,12 @@ class GradientSaveButton extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               Theme.of(context).colorScheme.primary,
-              AppTheme.primaryColor.withOpacity(0.7),
+              AppTheme.primaryColor.withValues(alpha: 0.7),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryColor.withOpacity(0.3),
+              color: AppTheme.primaryColor.withValues(alpha: 0.3),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),

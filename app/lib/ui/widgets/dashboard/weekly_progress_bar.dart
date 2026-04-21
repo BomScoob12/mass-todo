@@ -17,7 +17,7 @@ class WeeklyProgressBar extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -57,7 +57,7 @@ class WeeklyProgressBar extends StatelessWidget {
             height: 12,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.centerLeft,

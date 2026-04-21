@@ -46,7 +46,7 @@ class SettingsScreen extends ConsumerWidget {
               return Card(
                 margin: const EdgeInsets.only(bottom: 12.0),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 elevation: 0,
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -97,7 +97,7 @@ class SettingsScreen extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'Category Name',
             filled: true,
-            fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
           ),
           autofocus: true,

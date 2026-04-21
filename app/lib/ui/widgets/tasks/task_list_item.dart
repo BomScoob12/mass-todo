@@ -45,12 +45,12 @@ class TaskListItem extends ConsumerWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isCompleted ? Theme.of(context).colorScheme.surface.withOpacity(0.5) : Theme.of(context).colorScheme.surface,
+            color: isCompleted ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.5) : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: isCompleted ? Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2)) : null,
+            border: isCompleted ? Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2)) : null,
             boxShadow: isCompleted ? [] : [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 12,
                 offset: const Offset(0, 2),
               ),

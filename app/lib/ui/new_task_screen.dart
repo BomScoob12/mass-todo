@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app/models/task_model.dart';
 import 'package:app/providers/task_provider.dart';
 import 'package:app/providers/category_provider.dart';
-import 'package:app/ui/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -142,7 +141,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.close),
@@ -199,7 +198,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                                 label: 'Deadline',
                                 valueText: _selectedDate != null ? DateFormat('MMM d, h:mm a').format(_selectedDate!) : 'Not set',
                                 iconView: Icons.calendar_month,
-                                iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+                                iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.4),
                                 iconColor: Theme.of(context).colorScheme.primary,
                               ),
                             ),
@@ -327,7 +326,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                               decoration: InputDecoration(
                                 hintText: 'Enter category name...',
                                 filled: true,
-                                fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                               ),
                               onChanged: (_) {

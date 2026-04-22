@@ -230,7 +230,30 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
     }
 
     final sortedCategories = groups.keys.toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+      ..sort((a, b) {
+        final aTasks = groups[a]!;
+        final bTasks = groups[b]!;
+
+        DateTime? getEarliestDeadline(List<TaskItem> tasks) {
+          DateTime? earliest;
+          for (final t in tasks) {
+            if (t.deadline != null) {
+              if (earliest == null || t.deadline!.isBefore(earliest)) {
+                earliest = t.deadline;
+              }
+            }
+          }
+          return earliest;
+        }
+
+        final aMin = getEarliestDeadline(aTasks);
+        final bMin = getEarliestDeadline(bTasks);
+
+        if (aMin == null && bMin == null) return a.name.compareTo(b.name);
+        if (aMin == null) return 1;
+        if (bMin == null) return -1;
+        return aMin.compareTo(bMin);
+      });
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -242,9 +265,9 @@ class _MyTasksScreenState extends ConsumerState<MyTasksScreen> {
         // For now, simpler: incomplete first.
         categoryTasks.sort((a, b) {
           if (a.isCompleted == b.isCompleted) {
-            return (a.deadline ?? DateTime.now()).compareTo(
-              b.deadline ?? DateTime.now(),
-            );
+            final aDeadline = a.deadline ?? DateTime.fromMillisecondsSinceEpoch(4102444800000); // Year 2100
+            final bDeadline = b.deadline ?? DateTime.fromMillisecondsSinceEpoch(4102444800000);
+            return aDeadline.compareTo(bDeadline);
           }
           return a.isCompleted ? 1 : -1;
         });

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:masstodo/ui/app_theme.dart';
+import 'package:masstodo/ui/app_styles.dart';
 
 class GradientSaveButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -20,13 +20,13 @@ class GradientSaveButton extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).colorScheme.primary,
-              AppTheme.primaryColor.withValues(alpha: 0.7),
+              AppColors.primary,
+              AppColors.primary.withValues(alpha: 0.7),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryColor.withValues(alpha: 0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),

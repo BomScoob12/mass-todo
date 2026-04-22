@@ -53,11 +53,17 @@ class TaskFormState {
   }
 }
 
-class TaskFormNotifier extends StateNotifier<TaskFormState> {
-  TaskFormNotifier([TaskItem? initialTask])
-      : super(initialTask != null
-            ? TaskFormState.fromTask(initialTask)
-            : TaskFormState(deadline: DateTime.now()));
+class TaskFormNotifier extends Notifier<TaskFormState> {
+  @override
+  TaskFormState build() => TaskFormState(deadline: DateTime.now());
+
+  void initWithTask(TaskItem? task) {
+    if (task != null) {
+      state = TaskFormState.fromTask(task);
+    } else {
+      state = TaskFormState(deadline: DateTime.now());
+    }
+  }
 
   void updateName(String name) => state = state.copyWith(name: name);
   void updateDescription(String description) =>
@@ -76,8 +82,7 @@ class TaskFormNotifier extends StateNotifier<TaskFormState> {
       state = state.copyWith(newCategoryName: name);
 }
 
-// We use an autoDispose family provider to handle editing/creating modes
-final taskFormProvider = StateNotifierProvider.autoDispose
-    .family<TaskFormNotifier, TaskFormState, TaskItem?>((ref, task) {
-  return TaskFormNotifier(task);
-});
+final taskFormProvider =
+    NotifierProvider<TaskFormNotifier, TaskFormState>(
+  TaskFormNotifier.new,
+);

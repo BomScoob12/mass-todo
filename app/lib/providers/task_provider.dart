@@ -23,7 +23,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> addTask(TaskItem task) async {
-    state = const AsyncValue.loading();
+    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
     try {
       await ref.read(taskRepositoryProvider).createTask(task);
       final showCompleted = ref.read(showCompletedTasksProvider);
@@ -35,7 +35,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> updateTask(TaskItem task) async {
-    state = const AsyncValue.loading();
+    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
     try {
       await ref.read(taskRepositoryProvider).updateTask(task);
       final showCompleted = ref.read(showCompletedTasksProvider);
@@ -47,11 +47,17 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> toggleTaskCompletion(String id) async {
-    if (state.value == null) return;
+    // We don't return early if state is loading, as long as it has a value
+    if (!state.hasValue) return;
+    
     try {
       final task = state.value!.firstWhere((t) => t.id == id);
-      final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
-      await ref.read(taskRepositoryProvider).updateTask(updatedTask);
+      final newCompletionStatus = !task.isCompleted;
+      
+      // Atomic update in DB
+      await ref.read(taskRepositoryProvider).updateTaskCompletion(id, newCompletionStatus);
+      
+      // Refresh state
       final showCompleted = ref.read(showCompletedTasksProvider);
       state = AsyncValue.data(await _fetchTasks(showCompleted));
       ref.invalidate(tasksStatsProvider);
@@ -61,7 +67,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> deleteTask(String id) async {
-    state = const AsyncValue.loading();
+    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
     try {
       await ref.read(taskRepositoryProvider).deleteTask(id);
       final showCompleted = ref.read(showCompletedTasksProvider);
@@ -73,7 +79,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> deleteTasksByCategoryId(String categoryId) async {
-    state = const AsyncValue.loading();
+    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
     try {
       await ref
           .read(taskRepositoryProvider)

@@ -42,6 +42,16 @@ class TaskRepository {
     );
   }
 
+  Future<int> updateTaskCompletion(String id, bool isCompleted) async {
+    final db = await dbHelper.database;
+    return db.update(
+      'tasks',
+      {'isCompleted': isCompleted ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<int> deleteTask(String id) async {
     final db = await dbHelper.database;
     return await db.delete(

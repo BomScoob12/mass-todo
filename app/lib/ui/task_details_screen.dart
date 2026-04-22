@@ -4,6 +4,7 @@ import 'package:masstodo/models/task_model.dart';
 import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/providers/category_provider.dart';
 import 'package:masstodo/utils/date_extensions.dart';
+import 'package:masstodo/utils/messenger_utils.dart';
 import 'package:masstodo/ui/new_task_screen.dart';
 import 'package:masstodo/ui/app_styles.dart';
 
@@ -190,14 +191,7 @@ class TaskDetailsScreen extends ConsumerWidget {
             
             if (!context.mounted) return;
             if (!wasCompleted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Task "${task.name}" completed!'),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              );
+              Messenger.showSnackbar('Task "${task.name}" completed!', isSuccess: true);
             }
           },
           style: ElevatedButton.styleFrom(

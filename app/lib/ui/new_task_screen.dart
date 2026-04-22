@@ -6,6 +6,7 @@ import 'package:masstodo/providers/category_provider.dart';
 import 'package:masstodo/providers/task_form_provider.dart';
 import 'package:masstodo/utils/date_extensions.dart';
 import 'package:masstodo/ui/app_styles.dart';
+import 'package:masstodo/utils/messenger_utils.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:masstodo/ui/widgets/new_task/priority_selector.dart';
@@ -51,9 +52,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
   Future<void> _saveTask(TaskFormState formState) async {
     if (_formKey.currentState!.validate()) {
       if (formState.categoryId == null && !formState.isCreatingCategory) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select or create a category')),
-        );
+        Messenger.showSnackbar('Please select or create a category', isError: true);
         return;
       }
 

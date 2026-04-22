@@ -5,6 +5,7 @@ import 'package:masstodo/ui/task_details_screen.dart';
 import 'package:masstodo/ui/app_theme.dart';
 import 'package:masstodo/ui/app_styles.dart';
 import 'package:masstodo/utils/date_extensions.dart';
+import 'package:masstodo/utils/messenger_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListItem extends ConsumerWidget {
@@ -91,23 +92,16 @@ class TaskListItem extends ConsumerWidget {
 
                       if (!context.mounted) return;
                       if (!wasCompleted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Task "${task.name}" completed!'),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: AppRadius.radiusM,
-                            ),
-                            action: SnackBarAction(
-                              label: 'Dismiss',
-                              textColor: Colors.white,
-                              onPressed: () {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                              },
-                            ),
+                        Messenger.showSnackbar(
+                          'Task "${task.name}" completed!',
+                          isSuccess: true,
+                          action: SnackBarAction(
+                            label: 'Dismiss',
+                            textColor: Colors.white,
+                            onPressed: () {
+                              Messenger.scaffoldMessengerKey.currentState
+                                  ?.hideCurrentSnackBar();
+                            },
                           ),
                         );
                       }

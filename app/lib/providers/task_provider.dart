@@ -38,8 +38,10 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
     state = const AsyncValue.loading();
     try {
       await ref.read(taskRepositoryProvider).updateTask(task);
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.map((t) => t.id == task.id ? task : t).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -47,13 +49,17 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> toggleTaskCompletion(String id) async {
-    if (state.value == null) return;
+    if (!state.hasValue) return;
+    
     try {
       final task = state.value!.firstWhere((t) => t.id == id);
       final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
       await ref.read(taskRepositoryProvider).updateTask(updatedTask);
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.map((t) => t.id == id ? updatedTask : t).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -64,8 +70,10 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
     state = const AsyncValue.loading();
     try {
       await ref.read(taskRepositoryProvider).deleteTask(id);
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.where((t) => t.id != id).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

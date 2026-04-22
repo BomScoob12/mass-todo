@@ -6,6 +6,7 @@ import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/ui/widgets/dashboard/bento_grid_stats.dart';
 import 'package:masstodo/ui/widgets/dashboard/next_up_card.dart';
 import 'package:masstodo/ui/widgets/dashboard/weekly_progress_bar.dart';
+import 'package:masstodo/ui/widgets/dashboard/overdue_tasks_section.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -59,6 +60,9 @@ class DashboardScreen extends ConsumerWidget {
                 completedTasks: (stats['completed'] ?? 0) as int,
               ),
               const SizedBox(height: 32),
+
+              // Overdue Tasks
+              OverdueTasksSection(tasks: (stats['overdueTasks'] as List<TaskItem>?) ?? []),
 
               // Next Up
               NextUpCard(

@@ -42,6 +42,16 @@ class TaskRepository {
     );
   }
 
+  Future<int> updateTaskCompletion(String id, bool isCompleted) async {
+    final db = await dbHelper.database;
+    return db.update(
+      'tasks',
+      {'isCompleted': isCompleted ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<int> deleteTask(String id) async {
     final db = await dbHelper.database;
     return await db.delete(
@@ -104,6 +114,15 @@ class TaskRepository {
     
     TaskItem? nextPriority = nextUpResult.isNotEmpty ? TaskItem.fromMap(nextUpResult.first) : null;
     
+    final overdueResult = await db.query(
+      'tasks',
+      where: 'isCompleted = 0 AND deadline < ?',
+      whereArgs: [todayStart],
+      orderBy: 'deadline ASC',
+    );
+    
+    final overdueTasks = overdueResult.map((json) => TaskItem.fromMap(json)).toList();
+    
     return {
       'total': total,
       'completed': completed,
@@ -112,6 +131,7 @@ class TaskRepository {
       'nextUp': nextPriority,
       'today': todayCount,
       'weeklyProgress': weeklyProgress,
+      'overdueTasks': overdueTasks,
     };
   }
 }

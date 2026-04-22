@@ -1,7 +1,9 @@
 # Mass Todo
 
 ## 📋 Overview
-Mass Todo is a high-performance, offline-first personal productivity application built with Flutter. It combines a premium design aesthetic (Linear-inspired) with a robust modular architecture to provide a seamless task management experience.
+Mass Todo is a high-performance, offline-first task management application built with Flutter. It combines a premium design aesthetic (Linear-inspired) with a robust modular architecture to provide a seamless task management experience.
+
+<img src="docs/images/dashboard.png" height="400" alt="Dashboard Overview">
 
 ---
 
@@ -11,24 +13,21 @@ Mass Todo is a high-performance, offline-first personal productivity application
 - **Bento Grid Stats**: At-a-glance view of Today's Tasks, Pending Items, and Completed Count.
 - **Weekly Progress**: Visual tracking of your consistency throughout the week.
 - **Next Up Card**: Dynamic spotlight on your highest priority upcoming task.
+- **Overdue Task Section**: Collapsible alert area that surfaces urgent tasks that missed their deadlines.
+
+<img src="docs/images/dashboard-overdue-expand.png" height="400" alt="Overdue Section Expanded">
 
 ### 2. Intelligent Task Management
 - **Offline-First Persistence**: Powered by SQLite for reliable data storage without an internet connection.
 - **Dynamic Categorization**: Group tasks by custom categories (General, Personal, Work, etc.).
 - **Smart Filtering**: Toggle visibility of completed tasks and filter the main list by specific categories.
-- **Priority Signaling**: Color-coded priority levels (Low, Medium, High).
+
+<img src="docs/images/mytask-with-category-group.png" height="400" alt="My Tasks Grouped">
 
 ### 3. Category Management
 - Dedicated settings interface to manage your organizational hierarchy.
-- **Cascade Operations**: Deleting a category automatically handles associated tasks safely.
-- Protected default "General" category to ensure system stability.
 
-### 4. Developer & DevOps Flow
-- **Modern State Management**: Fully migrated to **Riverpod 3.0** (Notifier & AsyncNotifier patterns).
-- **CI/CD Pipeline**:
-  - **Automated Check**: Static analysis runs on every pull request.
-  - **Controlled Build**: On-demand Android APK generation via GitHub Actions.
-  - **Artifact Release**: Verified APK distribution through GitHub Artifacts.
+<img src="docs/images/setting.png" height="400" alt="Settings Screen">
 
 ---
 
@@ -45,9 +44,16 @@ Mass Todo is a high-performance, offline-first personal productivity application
 
 ---
 
+### Developer & DevOps Flow
+- **Modern State Management**: **Riverpod 3.0** (Notifier & AsyncNotifier patterns).
+- **CI/CD Pipeline**:
+  - **Automated Check**: Static analysis runs on every pull request.
+  - **Controlled Build**: On-demand Android APK generation via GitHub Actions.
+  - **Artifact Release**: Verified APK distribution through GitHub Artifacts.
+
 ## 📦 Installation & Build
 ### For Users
-Download the `release-apk` artifact from the latest successful **Android Build** run on GitHub.
+Download on github releases
 
 ### For Developers
 1. Clone the repository.

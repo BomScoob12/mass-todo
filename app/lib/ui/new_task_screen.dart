@@ -259,11 +259,18 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
 
   Future<void> _pickDeadline(
       TaskFormState formState, TaskFormNotifier formNotifier) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
+    // Ensure initialDate is within valid range [firstDate, lastDate]
+    final initialDate = formState.deadline ?? now;
+    final effectiveInitialDate = initialDate.isBefore(today) ? today : initialDate;
+
     final date = await showDatePicker(
       context: context,
-      initialDate: formState.deadline ?? DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-      lastDate: DateTime(2050),
+      initialDate: effectiveInitialDate,
+      firstDate: today,
+      lastDate: DateTime(2101),
     );
     if (date != null) {
       if (!mounted) return;

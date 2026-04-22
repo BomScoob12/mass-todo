@@ -55,13 +55,13 @@ class TaskFormState {
 
 class TaskFormNotifier extends Notifier<TaskFormState> {
   @override
-  TaskFormState build() => TaskFormState(deadline: DateTime.now());
+  TaskFormState build() => TaskFormState();
 
   void initWithTask(TaskItem? task) {
     if (task != null) {
       state = TaskFormState.fromTask(task);
     } else {
-      state = TaskFormState(deadline: DateTime.now());
+      state = TaskFormState();
     }
   }
 

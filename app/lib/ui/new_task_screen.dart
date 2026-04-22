@@ -89,7 +89,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
           deadline: _selectedDate,
           priority: _priority,
         );
-        ref.read(taskListProvider.notifier).updateTask(updatedTask);
+        await ref.read(taskListProvider.notifier).updateTask(updatedTask);
       } else {
         final task = TaskItem(
           id: uuid,
@@ -102,9 +102,10 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
           priority: _priority,
           createdAt: DateTime.now(),
         );
-        ref.read(taskListProvider.notifier).addTask(task);
+        await ref.read(taskListProvider.notifier).addTask(task);
       }
 
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }

@@ -158,8 +158,25 @@ class TaskDetailsScreen extends ConsumerWidget {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {
-                  ref.read(taskListProvider.notifier).toggleTaskCompletion(currentTask!.id);
+                onPressed: () async {
+                  final wasCompleted = currentTask!.isCompleted;
+                  await ref
+                      .read(taskListProvider.notifier)
+                      .toggleTaskCompletion(currentTask.id);
+
+                  if (!context.mounted) return;
+                  if (!wasCompleted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Task "${currentTask.name}" completed!'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: currentTask.isCompleted 

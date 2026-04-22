@@ -69,7 +69,35 @@ class TaskListItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: () => ref.read(taskListProvider.notifier).toggleTaskCompletion(task.id),
+                    onTap: () async {
+                      final wasCompleted = task.isCompleted;
+                      await ref
+                          .read(taskListProvider.notifier)
+                          .toggleTaskCompletion(task.id);
+
+                      if (!mounted) return;
+                      if (!wasCompleted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Task "${task.name}" completed!'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            action: SnackBarAction(
+                              label: 'Dismiss',
+                              textColor: Colors.white,
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     child: Container(
                       width: 24,
                       height: 24,

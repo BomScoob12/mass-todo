@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:masstodo/ui/app_theme.dart';
+import 'package:masstodo/ui/app_styles.dart';
 
 class PrioritySelector extends StatelessWidget {
   final String currentPriority;
@@ -12,10 +14,12 @@ class PrioritySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final priorityColors = Theme.of(context).extension<AppPriorityColors>()!;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: AppRadius.radiusPill,
       ),
       padding: const EdgeInsets.all(6),
       child: Row(
@@ -34,14 +38,29 @@ class PrioritySelector extends StatelessWidget {
           if (isSelected) {
             textColor = Colors.white;
             if (p == 'Low') {
-              bgColor = Colors.grey.shade600;
-              boxShadow = [BoxShadow(color: Colors.grey.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              bgColor = priorityColors.low;
+              boxShadow = [
+                BoxShadow(
+                    color: bgColor.withValues(alpha: 0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4))
+              ];
             } else if (p == 'Medium') {
-              bgColor = Colors.orange.shade600;
-              boxShadow = [BoxShadow(color: Colors.orange.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              bgColor = priorityColors.medium;
+              boxShadow = [
+                BoxShadow(
+                    color: bgColor.withValues(alpha: 0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4))
+              ];
             } else if (p == 'High') {
-              bgColor = Colors.red.shade600;
-              boxShadow = [BoxShadow(color: Colors.red.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))];
+              bgColor = priorityColors.high;
+              boxShadow = [
+                BoxShadow(
+                    color: bgColor.withValues(alpha: 0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4))
+              ];
             }
           }
 
@@ -49,18 +68,18 @@ class PrioritySelector extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onChanged(p),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: AppAnimations.fast,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   color: bgColor,
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: AppRadius.radiusXL,
                   boxShadow: boxShadow,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(iconData, size: 18, color: textColor),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: AppSpacing.xs),
                     Text(
                       p,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(

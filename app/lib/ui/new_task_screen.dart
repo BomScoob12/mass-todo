@@ -117,11 +117,11 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          padding: AppSpacing.screenPadding,
           child: Column(
             children: [
               _buildHeader(context),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
               Expanded(
                 child: Form(
                   key: _formKey,
@@ -141,28 +141,29 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.l),
                         _buildLabel('Description'),
                         CustomTextField(
                           controller: _descriptionController,
                           hintText: 'Add context, notes, or sub-items...',
                           maxLines: 3,
                         ),
-                        const SizedBox(height: 32),
-                        _buildMetadataSection(context, formState, formNotifier, categoryName),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: AppSpacing.xl),
+                        _buildMetadataSection(
+                            context, formState, formNotifier, categoryName),
+                        const SizedBox(height: AppSpacing.xl),
                         _buildLabel('Priority Level'),
                         PrioritySelector(
                           currentPriority: formState.priority,
                           onChanged: formNotifier.updatePriority,
                         ),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: AppSpacing.xxl),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.m),
               GradientSaveButton(onPressed: () => _saveTask(formState)),
             ],
           ),
@@ -184,12 +185,15 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         ),
         InkWell(
           onTap: () => Navigator.of(context).pop(),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: AppRadius.radiusXL,
           child: Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .surfaceContainerHighest
+                  .withValues(alpha: 0.5),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.close),
@@ -199,7 +203,8 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     );
   }
 
-  Widget _buildMetadataSection(BuildContext context, TaskFormState state, TaskFormNotifier notifier, String categoryName) {
+  Widget _buildMetadataSection(BuildContext context, TaskFormState state,
+      TaskFormNotifier notifier, String categoryName) {
     return Row(
       children: [
         Expanded(
@@ -208,19 +213,23 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
             label: 'Category',
             valueText: categoryName,
             iconView: Icons.architecture,
-            iconBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            iconBackgroundColor:
+                Theme.of(context).colorScheme.secondaryContainer,
             iconColor: Theme.of(context).colorScheme.onSecondaryContainer,
             hasTrailingIcon: true,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.m),
         Expanded(
           child: MetadataSelectorCard(
             onTap: () => _pickDeadline(state, notifier),
             label: 'Deadline',
             valueText: state.deadline?.formatShort ?? 'Not set',
             iconView: Icons.calendar_month,
-            iconBackgroundColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.4),
+            iconBackgroundColor: Theme.of(context)
+                .colorScheme
+                .primaryContainer
+                .withValues(alpha: 0.4),
             iconColor: Theme.of(context).colorScheme.primary,
           ),
         ),

@@ -61,18 +61,18 @@ class TaskDetailsScreen extends ConsumerWidget {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: AppSpacing.screenPadding,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTitle(context, currentTask),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: AppSpacing.xl),
                   _buildInfoCard(context, currentTask, categoryName),
                   if (currentTask.description?.isNotEmpty ?? false) ...[
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.xl),
                     _buildNotesSection(context, currentTask.description!),
                   ],
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.xxl),
                   _buildCreationDate(context, currentTask.createdAt),
                 ],
               ),
@@ -98,19 +98,25 @@ class TaskDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildInfoCard(BuildContext context, TaskItem task, String categoryName) {
+  Widget _buildInfoCard(
+      BuildContext context, TaskItem task, String categoryName) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(24.0),
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceContainerHighest
+            .withValues(alpha: 0.4),
+        borderRadius: AppRadius.radiusXL,
       ),
-      padding: const EdgeInsets.all(24.0),
+      padding: AppSpacing.cardPadding,
       child: Column(
         children: [
-          _buildDetailRow(context, Icons.category_outlined, 'Category', categoryName),
-          const Divider(height: 32),
-          _buildDetailRow(context, Icons.flag_outlined, 'Priority', task.priority),
-          const Divider(height: 32),
+          _buildDetailRow(
+              context, Icons.category_outlined, 'Category', categoryName),
+          const Divider(height: AppSpacing.xl),
+          _buildDetailRow(
+              context, Icons.flag_outlined, 'Priority', task.priority),
+          const Divider(height: AppSpacing.xl),
           _buildDetailRow(
             context,
             Icons.schedule,
@@ -128,16 +134,26 @@ class TaskDetailsScreen extends ConsumerWidget {
       children: [
         Text(
           'Notes',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontWeight: FontWeight.w800),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.m),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2)),
+            color: Theme.of(context)
+                .colorScheme
+                .surfaceContainerHighest
+                .withValues(alpha: 0.2),
+            borderRadius: AppRadius.radiusL,
+            border: Border.all(
+                color: Theme.of(context)
+                    .colorScheme
+                    .outlineVariant
+                    .withValues(alpha: 0.2)),
           ),
           child: Text(
             notes,

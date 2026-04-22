@@ -37,11 +37,11 @@ class AppRadius {
   static const double xl = 24.0;
   static const double pill = 32.0;
 
-  static BorderRadius radiusS = BorderRadius.circular(s);
-  static BorderRadius radiusM = BorderRadius.circular(m);
-  static BorderRadius radiusL = BorderRadius.circular(l);
-  static BorderRadius radiusXL = BorderRadius.circular(xl);
-  static BorderRadius radiusPill = BorderRadius.circular(pill);
+  static const BorderRadius radiusS = BorderRadius.all(Radius.circular(s));
+  static const BorderRadius radiusM = BorderRadius.all(Radius.circular(m));
+  static const BorderRadius radiusL = BorderRadius.all(Radius.circular(l));
+  static const BorderRadius radiusXL = BorderRadius.all(Radius.circular(xl));
+  static const BorderRadius radiusPill = BorderRadius.all(Radius.circular(pill));
 }
 
 class AppAnimations {

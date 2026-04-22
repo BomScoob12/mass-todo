@@ -5,6 +5,7 @@ import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/providers/category_provider.dart';
 import 'package:masstodo/utils/date_extensions.dart';
 import 'package:masstodo/ui/new_task_screen.dart';
+import 'package:masstodo/ui/app_styles.dart';
 
 class TaskDetailsScreen extends ConsumerWidget {
   final TaskItem task;
@@ -66,13 +67,13 @@ class TaskDetailsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTitle(context, currentTask),
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: AppSpacing.xl),
                   _buildInfoCard(context, currentTask, categoryName),
                   if (currentTask.description?.isNotEmpty ?? false) ...[
-                    const SizedBox(height: AppSpacing.xl),
+                    SizedBox(height: AppSpacing.xl),
                     _buildNotesSection(context, currentTask.description!),
                   ],
-                  const SizedBox(height: AppSpacing.xxl),
+                  SizedBox(height: AppSpacing.xxl),
                   _buildCreationDate(context, currentTask.createdAt),
                 ],
               ),

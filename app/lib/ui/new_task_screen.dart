@@ -5,6 +5,7 @@ import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/providers/category_provider.dart';
 import 'package:masstodo/providers/task_form_provider.dart';
 import 'package:masstodo/utils/date_extensions.dart';
+import 'package:masstodo/ui/app_styles.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:masstodo/ui/widgets/new_task/priority_selector.dart';
@@ -33,6 +34,11 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     _nameController = TextEditingController(text: widget.taskToEdit?.name ?? '');
     _descriptionController =
         TextEditingController(text: widget.taskToEdit?.description ?? '');
+    
+    // Initialize form state using the notifier
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(taskFormProvider.notifier).initWithTask(widget.taskToEdit);
+    });
   }
 
   @override
@@ -96,8 +102,8 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final formState = ref.watch(taskFormProvider(widget.taskToEdit));
-    final formNotifier = ref.read(taskFormProvider(widget.taskToEdit).notifier);
+    final formState = ref.watch(taskFormProvider);
+    final formNotifier = ref.read(taskFormProvider.notifier);
     final categoriesAsync = ref.watch(categoryProvider);
 
     String categoryName = 'Select';
@@ -121,7 +127,7 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
           child: Column(
             children: [
               _buildHeader(context),
-              const SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.xl),
               Expanded(
                 child: Form(
                   key: _formKey,
@@ -141,29 +147,29 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: AppSpacing.l),
+                        SizedBox(height: AppSpacing.l),
                         _buildLabel('Description'),
                         CustomTextField(
                           controller: _descriptionController,
                           hintText: 'Add context, notes, or sub-items...',
                           maxLines: 3,
                         ),
-                        const SizedBox(height: AppSpacing.xl),
+                        SizedBox(height: AppSpacing.xl),
                         _buildMetadataSection(
                             context, formState, formNotifier, categoryName),
-                        const SizedBox(height: AppSpacing.xl),
+                        SizedBox(height: AppSpacing.xl),
                         _buildLabel('Priority Level'),
                         PrioritySelector(
                           currentPriority: formState.priority,
                           onChanged: formNotifier.updatePriority,
                         ),
-                        const SizedBox(height: AppSpacing.xxl),
+                        SizedBox(height: AppSpacing.xxl),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.m),
+              SizedBox(height: AppSpacing.m),
               GradientSaveButton(onPressed: () => _saveTask(formState)),
             ],
           ),
@@ -203,13 +209,13 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     );
   }
 
-  Widget _buildMetadataSection(BuildContext context, TaskFormState state,
-      TaskFormNotifier notifier, String categoryName) {
+  Widget _buildMetadataSection(BuildContext context, TaskFormState formState,
+      TaskFormNotifier formNotifier, String categoryName) {
     return Row(
       children: [
         Expanded(
           child: MetadataSelectorCard(
-            onTap: () => _showCategoryPicker(state, notifier),
+            onTap: () => _showCategoryPicker(formState, formNotifier),
             label: 'Category',
             valueText: categoryName,
             iconView: Icons.architecture,
@@ -222,9 +228,9 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         const SizedBox(width: AppSpacing.m),
         Expanded(
           child: MetadataSelectorCard(
-            onTap: () => _pickDeadline(state, notifier),
+            onTap: () => _pickDeadline(formState, formNotifier),
             label: 'Deadline',
-            valueText: state.deadline?.formatShort ?? 'Not set',
+            valueText: formState.deadline?.formatShort ?? 'Not set',
             iconView: Icons.calendar_month,
             iconBackgroundColor: Theme.of(context)
                 .colorScheme
@@ -251,10 +257,11 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     );
   }
 
-  Future<void> _pickDeadline(TaskFormState state, TaskFormNotifier notifier) async {
+  Future<void> _pickDeadline(
+      TaskFormState formState, TaskFormNotifier formNotifier) async {
     final date = await showDatePicker(
       context: context,
-      initialDate: state.deadline ?? DateTime.now(),
+      initialDate: formState.deadline ?? DateTime.now(),
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime(2050),
     );
@@ -262,10 +269,10 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
       if (!mounted) return;
       final time = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(state.deadline ?? DateTime.now()),
+        initialTime: TimeOfDay.fromDateTime(formState.deadline ?? DateTime.now()),
       );
       if (time != null) {
-        notifier.updateDeadline(DateTime(
+        formNotifier.updateDeadline(DateTime(
           date.year,
           date.month,
           date.day,
@@ -276,7 +283,8 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     }
   }
 
-  void _showCategoryPicker(TaskFormState state, TaskFormNotifier notifier) {
+  void _showCategoryPicker(
+      TaskFormState formState, TaskFormNotifier formNotifier) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -284,14 +292,14 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (context) => CategoryPickerSheet(
-        initialCategoryId: state.categoryId,
-        initialIsCreating: state.isCreatingCategory,
+        initialCategoryId: formState.categoryId,
+        initialIsCreating: formState.isCreatingCategory,
         onSelected: (id, isCreating, newName) {
           if (isCreating) {
-            notifier.updateNewCategoryName(newName);
-            notifier.setCreatingCategory(true);
+            formNotifier.updateNewCategoryName(newName);
+            formNotifier.setCreatingCategory(true);
           } else {
-            notifier.updateCategory(id);
+            formNotifier.updateCategory(id);
           }
         },
       ),

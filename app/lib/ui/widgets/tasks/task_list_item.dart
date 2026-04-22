@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:masstodo/models/task_model.dart';
 import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/ui/task_details_screen.dart';
+import 'package:masstodo/ui/app_theme.dart';
+import 'package:masstodo/ui/app_styles.dart';
 import 'package:masstodo/utils/date_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +30,7 @@ class TaskListItem extends ConsumerWidget {
     final isCompleted = task.isCompleted;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.m),
+      padding: EdgeInsets.only(bottom: AppSpacing.m),
       child: Dismissible(
         key: Key(task.id),
         direction: DismissDirection.endToStart,
@@ -76,7 +78,7 @@ class TaskListItem extends ConsumerWidget {
               ));
             },
             child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.m),
+              padding: EdgeInsets.all(AppSpacing.m),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -147,7 +149,7 @@ class TaskListItem extends ConsumerWidget {
                                 ),
                           ),
                           if (task.deadline != null) ...[
-                            const SizedBox(height: AppSpacing.s),
+                            SizedBox(height: AppSpacing.s),
                             Row(
                               children: [
                                 Icon(Icons.schedule,
@@ -155,7 +157,7 @@ class TaskListItem extends ConsumerWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurfaceVariant),
-                                const SizedBox(width: AppSpacing.xs),
+                                SizedBox(width: AppSpacing.xs),
                                 Text(
                                   task.deadline!.formatFull,
                                   style: Theme.of(context)

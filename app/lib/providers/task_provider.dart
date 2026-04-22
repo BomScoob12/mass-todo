@@ -23,7 +23,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> addTask(TaskItem task) async {
-    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
+    state = const AsyncValue.loading();
     try {
       await ref.read(taskRepositoryProvider).createTask(task);
       final showCompleted = ref.read(showCompletedTasksProvider);
@@ -35,11 +35,13 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> updateTask(TaskItem task) async {
-    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
+    state = const AsyncValue.loading();
     try {
       await ref.read(taskRepositoryProvider).updateTask(task);
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.map((t) => t.id == task.id ? task : t).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -47,19 +49,17 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> toggleTaskCompletion(String id) async {
-    // We don't return early if state is loading, as long as it has a value
     if (!state.hasValue) return;
     
     try {
       final task = state.value!.firstWhere((t) => t.id == id);
-      final newCompletionStatus = !task.isCompleted;
+      final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
+      await ref.read(taskRepositoryProvider).updateTask(updatedTask);
       
-      // Atomic update in DB
-      await ref.read(taskRepositoryProvider).updateTaskCompletion(id, newCompletionStatus);
-      
-      // Refresh state
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.map((t) => t.id == id ? updatedTask : t).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -67,11 +67,13 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> deleteTask(String id) async {
-    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
+    state = const AsyncValue.loading();
     try {
       await ref.read(taskRepositoryProvider).deleteTask(id);
-      final showCompleted = ref.read(showCompletedTasksProvider);
-      state = AsyncValue.data(await _fetchTasks(showCompleted));
+      final currentTasks = state.value ?? [];
+      state = AsyncValue.data(
+        currentTasks.where((t) => t.id != id).toList(),
+      );
       ref.invalidate(tasksStatsProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -79,7 +81,7 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   }
 
   Future<void> deleteTasksByCategoryId(String categoryId) async {
-    state = AsyncLoading<List<TaskItem>>().copyWithPrevious(state);
+    state = const AsyncValue.loading();
     try {
       await ref
           .read(taskRepositoryProvider)

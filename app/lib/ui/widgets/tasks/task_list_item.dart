@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masstodo/models/task_model.dart';
 import 'package:masstodo/providers/task_provider.dart';
 import 'package:masstodo/ui/task_details_screen.dart';
-import 'package:intl/intl.dart';
+import 'package:masstodo/utils/date_extensions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskListItem extends ConsumerWidget {
   final TaskItem task;
@@ -130,12 +130,21 @@ class TaskListItem extends ConsumerWidget {
                             const SizedBox(height: 6),
                             Row(
                               children: [
-                                Icon(Icons.schedule, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                Icon(Icons.schedule,
+                                    size: 16,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
                                 const SizedBox(width: 4),
                                 Text(
-                                  DateFormat('MMM dd, yyyy h:mm a').format(task.deadline!),
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  task.deadline!.formatFull,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
                                         fontWeight: FontWeight.w600,
                                       ),
                                 ),

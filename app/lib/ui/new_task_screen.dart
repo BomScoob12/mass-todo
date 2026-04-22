@@ -121,8 +121,9 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
+        bottom: false,
         child: Padding(
-          padding: AppSpacing.screenPadding,
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
           child: Column(
             children: [
               _buildHeader(context),
@@ -168,10 +169,14 @@ class _NewTaskScreenState extends ConsumerState<NewTaskScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: AppSpacing.m),
-              GradientSaveButton(onPressed: () => _saveTask(formState)),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+        child: SafeArea(
+          child: GradientSaveButton(onPressed: () => _saveTask(formState)),
         ),
       ),
     );

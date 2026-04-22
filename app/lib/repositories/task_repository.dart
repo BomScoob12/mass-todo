@@ -114,6 +114,15 @@ class TaskRepository {
     
     TaskItem? nextPriority = nextUpResult.isNotEmpty ? TaskItem.fromMap(nextUpResult.first) : null;
     
+    final overdueResult = await db.query(
+      'tasks',
+      where: 'isCompleted = 0 AND deadline < ?',
+      whereArgs: [todayStart],
+      orderBy: 'deadline ASC',
+    );
+    
+    final overdueTasks = overdueResult.map((json) => TaskItem.fromMap(json)).toList();
+    
     return {
       'total': total,
       'completed': completed,
@@ -122,6 +131,7 @@ class TaskRepository {
       'nextUp': nextPriority,
       'today': todayCount,
       'weeklyProgress': weeklyProgress,
+      'overdueTasks': overdueTasks,
     };
   }
 }

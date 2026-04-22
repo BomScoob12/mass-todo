@@ -16,19 +16,9 @@ Mass Todo is a high-performance, offline-first personal productivity application
 - **Offline-First Persistence**: Powered by SQLite for reliable data storage without an internet connection.
 - **Dynamic Categorization**: Group tasks by custom categories (General, Personal, Work, etc.).
 - **Smart Filtering**: Toggle visibility of completed tasks and filter the main list by specific categories.
-- **Priority Signaling**: Color-coded priority levels (Low, Medium, High).
 
 ### 3. Category Management
 - Dedicated settings interface to manage your organizational hierarchy.
-- **Cascade Operations**: Deleting a category automatically handles associated tasks safely.
-- Protected default "General" category to ensure system stability.
-
-### 4. Developer & DevOps Flow
-- **Modern State Management**: Fully migrated to **Riverpod 3.0** (Notifier & AsyncNotifier patterns).
-- **CI/CD Pipeline**:
-  - **Automated Check**: Static analysis runs on every pull request.
-  - **Controlled Build**: On-demand Android APK generation via GitHub Actions.
-  - **Artifact Release**: Verified APK distribution through GitHub Artifacts.
 
 ---
 
@@ -44,6 +34,13 @@ Mass Todo is a high-performance, offline-first personal productivity application
 | **DevOps** | GitHub Actions |
 
 ---
+
+### Developer & DevOps Flow
+- **Modern State Management**: **Riverpod 3.0** (Notifier & AsyncNotifier patterns).
+- **CI/CD Pipeline**:
+  - **Automated Check**: Static analysis runs on every pull request.
+  - **Controlled Build**: On-demand Android APK generation via GitHub Actions.
+  - **Artifact Release**: Verified APK distribution through GitHub Artifacts.
 
 ## 📦 Installation & Build
 ### For Users

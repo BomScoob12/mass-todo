@@ -101,6 +101,12 @@ class AppTheme {
         unselectedItemColor: AppColors.textSecondary,
         elevation: 8,
       ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.primary,
+        contentTextStyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusM),
+      ),
     );
   }
 }

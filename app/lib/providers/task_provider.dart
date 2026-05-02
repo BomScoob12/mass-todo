@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:masstodo/models/task_model.dart';
 import 'package:masstodo/providers/database_providers.dart';
 import 'package:masstodo/providers/tasks_filter_provider.dart';
+import 'package:masstodo/utils/notification_service.dart';
 
 final taskListProvider =
     AsyncNotifierProvider<TaskListNotifier, List<TaskItem>>(() {
@@ -29,6 +30,10 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
       final showCompleted = ref.read(showCompletedTasksProvider);
       state = AsyncValue.data(await _fetchTasks(showCompleted));
       ref.invalidate(tasksStatsProvider);
+      
+      if (!task.isCompleted && task.deadline != null) {
+        await ref.read(notificationServiceProvider).scheduleTaskNotification(task);
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -43,6 +48,12 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
         currentTasks.map((t) => t.id == task.id ? task : t).toList(),
       );
       ref.invalidate(tasksStatsProvider);
+
+      if (task.isCompleted || task.deadline == null) {
+        await ref.read(notificationServiceProvider).cancelTaskNotification(task.id);
+      } else {
+        await ref.read(notificationServiceProvider).scheduleTaskNotification(task);
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -61,6 +72,12 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
         currentTasks.map((t) => t.id == id ? updatedTask : t).toList(),
       );
       ref.invalidate(tasksStatsProvider);
+
+      if (updatedTask.isCompleted) {
+        await ref.read(notificationServiceProvider).cancelTaskNotification(updatedTask.id);
+      } else if (updatedTask.deadline != null) {
+        await ref.read(notificationServiceProvider).scheduleTaskNotification(updatedTask);
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -75,6 +92,8 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
         currentTasks.where((t) => t.id != id).toList(),
       );
       ref.invalidate(tasksStatsProvider);
+      
+      await ref.read(notificationServiceProvider).cancelTaskNotification(id);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -83,12 +102,19 @@ class TaskListNotifier extends AsyncNotifier<List<TaskItem>> {
   Future<void> deleteTasksByCategoryId(String categoryId) async {
     state = const AsyncValue.loading();
     try {
+      final currentTasks = state.value ?? [];
+      final tasksToDelete = currentTasks.where((t) => t.categoryId == categoryId).toList();
+
       await ref
           .read(taskRepositoryProvider)
           .deleteTasksByCategoryId(categoryId);
       final showCompleted = ref.read(showCompletedTasksProvider);
       state = AsyncValue.data(await _fetchTasks(showCompleted));
       ref.invalidate(tasksStatsProvider);
+
+      for (final t in tasksToDelete) {
+        await ref.read(notificationServiceProvider).cancelTaskNotification(t.id);
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
